@@ -3,12 +3,62 @@
 </script>
 
 <script lang="ts">
-	import Counter from '$lib/Counter.svelte';
+    import { onMount } from 'svelte';
+    import Gun from 'gun/gun';
+
+    const gun = Gun({
+        peers: [
+            'http://localhost:3030/gun',
+        ]
+    })
+
+    const GUN_PARTICIPANTS_KEY = 'participants';
+
+    let participantsStore: Record<string, { name: string }> = {}
+
+    let newParticipant = '';
+
+    const handleSubmit = () => {
+        if(!newParticipant) return;
+
+        if(Object.values(participantsStore).find(participant => participant.name === newParticipant)){
+            console.info('Participant already in!!');
+            return;
+        }
+
+        const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
+        gunParticipants.set({
+            name: newParticipant,
+        });
+
+        newParticipant = '';
+    }
+
+    const resetScorer = () => {
+        const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
+        Object.keys(participantsStore).forEach(key => {
+            gunParticipants.get(key).put(null);
+        });
+    }
+
+    onMount(() => {
+        const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
+        gunParticipants.map().on((data, key) => {
+            if(data){
+                participantsStore[key] = data;
+            }else if(participantsStore[key]) {
+                delete participantsStore[key];
+                participantsStore = participantsStore;
+            }
+        });
+	});
+
+    $: participants = Object.entries(participantsStore);
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>Task Scorer</title>
+	<meta name="description" content="Peer to peer application for scoring tasks for free!!" />
 </svelte:head>
 
 <section>
@@ -23,11 +73,21 @@
 		to your new<br />SvelteKit app
 	</h1>
 
-	<h2>
-		try editing <strong>src/routes/index.svelte</strong>
-	</h2>
+    <form on:submit|preventDefault={handleSubmit}>
+        <input
+            type="text"
+            name="participant_name"
+            placeholder="Tell me your name"
+            bind:value={newParticipant}
+        />
+        <button type="submit">Join the party</button>
+    </form>
 
-	<Counter />
+    <button type="button" on:click={resetScorer}>END the party</button>
+
+    {#each participants as [key, participant] (key)}
+        <h2>{key} - {participant.name}</h2>
+    {/each}
 </section>
 
 <style>
