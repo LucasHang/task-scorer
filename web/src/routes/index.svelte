@@ -12,11 +12,14 @@
         ]
     })
 
+    const fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
+
     const GUN_PARTICIPANTS_KEY = 'participants';
 
     let participantsStore: Record<string, { name: string }> = {}
 
     let newParticipant = '';
+    let selectedParticipant = '';
 
     const handleSubmit = () => {
         if(!newParticipant) return;
@@ -31,6 +34,7 @@
             name: newParticipant,
         });
 
+        selectedParticipant = newParticipant;
         newParticipant = '';
     }
 
@@ -39,6 +43,10 @@
         Object.keys(participantsStore).forEach(key => {
             gunParticipants.get(key).put(null);
         });
+    }
+
+    const enterAs = (key: string) => {
+        selectedParticipant = participantsStore[key].name;
     }
 
     onMount(() => {
@@ -62,32 +70,42 @@
 </svelte:head>
 
 <section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
-			</picture>
-		</span>
+    {#if selectedParticipant}
+        <h1 class="text-lg text-center font-thin mb-10">
+            Playing as {selectedParticipant}
+        </h1>
 
-		to your new<br />SvelteKit app
-	</h1>
+        <div class="grid grid-cols-10 gap-2">
+            {#each fibonacci as pointNumber}
+                <button class="btn bg-secondary text-secondary-content" on:click={() => console.log(`${pointNumber} selected`)}>
+                    {pointNumber}
+                </button>
+            {/each}
+        </div>
+    {:else}
+        <form on:submit|preventDefault={handleSubmit}>
+            <input
+                type="text"
+                name="participant_name"
+                placeholder="Tell me your name"
+                class="input"
+                bind:value={newParticipant}
+            />
+            <button class="btn" type="submit">Join the party</button>
+        </form>
 
-    <form on:submit|preventDefault={handleSubmit}>
-        <input
-            type="text"
-            name="participant_name"
-            placeholder="Tell me your name"
-            bind:value={newParticipant}
-        />
-        <button type="submit">Join the party</button>
-    </form>
-
-    <button type="button" on:click={resetScorer}>END the party</button>
-
-    {#each participants as [key, participant] (key)}
-        <h2>{key} - {participant.name}</h2>
-    {/each}
+        <ul class="menu bg-base-100 text-secondary-content p-2 m-4">
+            {#each participants as [key, participant] (key)}
+                <li class="bg-primary">
+                    <button on:click={() => enterAs(key)}>
+                        {key} - {participant.name}
+                    </button>
+                </li>    
+            {/each}
+        </ul>
+        
+        <button class="btn m-2" type="button" on:click={resetScorer}>END the party</button>
+    {/if}
 </section>
 
 <style>
@@ -101,21 +119,5 @@
 
 	h1 {
 		width: 100%;
-	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
 	}
 </style>
