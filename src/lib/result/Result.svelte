@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import type { IGunInstance } from "gun/types";
     import type Participant from "$lib/types/participant";
     import { GUN_PARTICIPANTS_KEY } from "$lib/vars";
@@ -9,6 +8,8 @@
     export let participants: Array<[string, Participant]>;
 
     const reset = () => {
+        selectedParticipant.update(participant => ({ ...participant, ready: false, selectedScore: null }));
+
         const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
         participants.forEach(([key]) => {
             gunParticipants.get(key).put({ ready: false, selectedScore: null });

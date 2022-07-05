@@ -32,8 +32,12 @@
 	});
 
     onMount(() => {
-        if($selectedParticipant.ready && !$selectedParticipant.selectedScore){
-            selectedParticipant.update(participant => ({ ...participant, ready: false }));
+        if($selectedParticipant.selectedScore){
+            selectedParticipant.update(participant => ({ ...participant, selectedScore: null }));
+        }else{
+            if($selectedParticipant.ready && !$selectedParticipant.selectedScore){
+                selectedParticipant.update(participant => ({ ...participant, ready: false }));
+            }
         }
     });
     onDestroy(() => unsubscribe());
