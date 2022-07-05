@@ -6,16 +6,17 @@
     import { onMount } from 'svelte';
     import Gun from 'gun/gun';
     
-    import type Participant from 'src/types/participant';
-    import { GUN_PARTICIPANTS_KEY, GUN_PEERS } from 'src/vars';
+    import type Participant from '$lib/types/participant';
+    import { GUN_PARTICIPANTS_KEY, GUN_PEERS } from '$lib/vars';
 
     import Participants from '$lib/participants/Participants.svelte';
     import Scorer from '$lib/scorer/Scorer.svelte';
+    import Result from '$lib/result/Result.svelte';
+    import { selectedParticipant } from '$lib/stores';
 
     const gun = Gun({ peers: GUN_PEERS });
 
     let participantsStore: Record<string, Participant> = {}
-    let selectedParticipant = '';
 
     onMount(() => {
         const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
@@ -30,6 +31,9 @@
 	});
 
     $: participants = Object.entries(participantsStore);
+    $: allParticipantsReady = 
+        Object.keys(participantsStore).length > 0 && 
+        !Object.values(participantsStore).find(item => !item.ready || !item.selectedScore);
 </script>
 
 <svelte:head>
@@ -38,14 +42,15 @@
 </svelte:head>
 
 <section>
-    {#if selectedParticipant}
-        <Scorer selectedParticipant={selectedParticipant} />
+    {#if allParticipantsReady}
+        <Result gun={gun} participants={participants} />
+    {:else if $selectedParticipant}
+        <Scorer gun={gun} participants={participants} />
     {:else}
         <Participants 
             gun={gun} 
             participants={participants} 
             participantsStore={participantsStore} 
-            selectedParticipant={selectedParticipant} 
         />
     {/if}
 </section>

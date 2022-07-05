@@ -1,12 +1,12 @@
 <script lang="ts">
     import type { IGunInstance } from 'gun/types';
-    import type Participant from 'src/types/participant';
-    import { GUN_PARTICIPANTS_KEY } from 'src/vars';
+    import type Participant from '$lib/types/participant';
+    import { GUN_PARTICIPANTS_KEY } from '$lib/vars';
+    import { selectedParticipant } from '$lib/stores';
 
     export let gun: IGunInstance<any>;
     export let participants: Array<[string, Participant]>;
     export let participantsStore: Record<string, Participant>;
-	export let selectedParticipant: string | undefined;
 
     let newParticipant = '';
 
@@ -21,9 +21,10 @@
         const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
         gunParticipants.set({
             name: newParticipant,
+            ready: false,
+            selectedScore: null,
         });
 
-        selectedParticipant = newParticipant;
         newParticipant = '';
     }
 
@@ -35,7 +36,14 @@
     }
 
     const enterAs = (key: string) => {
-        selectedParticipant = participantsStore[key].name;
+        const participant = participantsStore[key];
+
+        selectedParticipant.set({
+            key,
+            name: participant.name,
+            ready: participant.ready,
+            selectedScore: participant.selectedScore,
+        });
     }
 </script>
 
@@ -52,7 +60,7 @@
 
 <ul class="menu bg-base-100 text-secondary-content p-2 m-4">
     {#each participants as [key, participant] (key)}
-        <li class="bg-primary">
+        <li class="flex flex-row items-center gap-2 bg-primary">
             <button on:click={() => enterAs(key)}>
                 {key} - {participant.name}
             </button>
