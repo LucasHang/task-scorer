@@ -4,7 +4,7 @@
 
 <script lang="ts">
     import { onMount } from 'svelte';
-    import Gun from 'gun/gun';
+    import Gun from 'gun/gun.js';
     
     import type Participant from '$lib/types/participant';
     import { GUN_PARTICIPANTS_KEY, GUN_PEERS } from '$lib/vars';
