@@ -1,4 +1,4 @@
 import { writable } from 'svelte/store';
-import type { ParticipantWithKey } from './types/participant';
+import type Participant from './types/participant';
 
-export const selectedParticipant = writable<ParticipantWithKey>();
+export const selectedParticipant = writable<Participant>();

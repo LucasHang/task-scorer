@@ -7,33 +7,30 @@
     import Gun from 'gun/gun.js';
     
     import type Participant from '$lib/types/participant';
-    import { GUN_PARTICIPANTS_KEY, GUN_PEERS } from '$lib/vars';
+    import { GUN_PEERS } from '$lib/vars';
 
     import Participants from '$lib/participants/Participants.svelte';
     import Scorer from '$lib/scorer/Scorer.svelte';
     import Result from '$lib/result/Result.svelte';
     import { selectedParticipant } from '$lib/stores';
+    import { watchParticipants } from '$lib/client';
 
     const gun = Gun({ peers: GUN_PEERS });
 
-    let participantsStore: Record<string, Participant> = {}
+    let participantsStore: Array<Participant> = [];
 
     onMount(() => {
-        const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
-        gunParticipants.map().on((data, key) => {
-            if(data){
-                participantsStore[key] = data;
-            }else if(participantsStore[key]) {
-                delete participantsStore[key];
-                participantsStore = participantsStore;
-            }
+        watchParticipants(participantsStore, newParticipants => {
+            participantsStore = newParticipants;
         });
 	});
 
-    $: participants = Object.entries(participantsStore);
+    $: participants = participantsStore;
     $: allParticipantsReady = 
-        Object.keys(participantsStore).length > 0 && 
-        !Object.values(participantsStore).find(item => !item.ready || !item.selectedScore);
+        participants.length > 0 && 
+        !participants.find(item => !item.ready || !item.selectedScore);
+
+    $: console.log('index.svelte ~ participants', participants);
 </script>
 
 <svelte:head>
@@ -50,7 +47,6 @@
         <Participants 
             gun={gun} 
             participants={participants} 
-            participantsStore={participantsStore} 
         />
     {/if}
 </section>

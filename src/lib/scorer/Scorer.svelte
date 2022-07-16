@@ -6,12 +6,12 @@
     import { selectedParticipant } from '$lib/stores';
 
     export let gun: IGunInstance<any>;
-    export let participants: Array<[string, Participant]>;
+    export let participants: Array<Participant>;
     
     const fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
     const updateParticipant = (value: Partial<Participant>) => {
-        gun.get(GUN_PARTICIPANTS_KEY).get($selectedParticipant.key).put({ ...value });
+        gun.get(GUN_PARTICIPANTS_KEY).get($selectedParticipant.id).put({ ...value });
     }
 
     const handleSelectScore = (value: number) => {
@@ -43,8 +43,12 @@
     onDestroy(() => unsubscribe());
 </script>
 
+<p>Here you can choose the score and check the "ready" switch when you feel safe</p>
+<p>When all players are ready the result will be shown</p>
+<br>
+
 <h1 class="text-lg text-center font-thin mb-10">
-    Playing as {$selectedParticipant.key} - {$selectedParticipant.name}
+    Playing as {$selectedParticipant.id} - {$selectedParticipant.name}
 </h1>
 
 <div class="grid grid-cols-10 gap-2">
@@ -69,10 +73,10 @@
 </div>
 
 <ul class="menu p-2 m-4">
-    {#each participants as [key, participant] (key)}
+    {#each participants as participant (participant.id)}
         <li class="bg-ghost">
             <div class="flex flex-row items-center gap-2">
-                {key} - {participant.name}
+                {participant.id} - {participant.name}
 
                 {#if participant.ready} 
                     <div class="badge badge-accent">ready</div> 
