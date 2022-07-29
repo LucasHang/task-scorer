@@ -1,46 +1,44 @@
 <script lang="ts">
-    import { onMount, onDestroy } from 'svelte';
-    import type { IGunInstance } from 'gun/types';
+    import { onMount } from 'svelte';
     import type Participant from "$lib/types/participant";
     import { GUN_PARTICIPANTS_KEY } from '$lib/vars';
-    import { selectedParticipant } from '$lib/stores';
+    import gun from '$lib/client';
 
-    export let gun: IGunInstance<any>;
+    export let selectedParticipant: Participant;
     export let participants: Array<Participant>;
     
     const fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
     const updateParticipant = (value: Partial<Participant>) => {
-        gun.get(GUN_PARTICIPANTS_KEY).get($selectedParticipant.id).put({ ...value });
+        gun.get(GUN_PARTICIPANTS_KEY).get(selectedParticipant.id).put({ ...value });
     }
 
     const handleSelectScore = (value: number) => {
-        if($selectedParticipant.ready){
-            selectedParticipant.update(participant => ({ ...participant, ready: false }));
+        if(selectedParticipant.ready){
+            updateParticipant({ ready: false });
         }
 
         let newSelectedScore: number | null = value;
-        if(value === $selectedParticipant.selectedScore){
+        if(value === selectedParticipant.selectedScore){
             newSelectedScore = null;
         }
 
-        selectedParticipant.update(participant => ({ ...participant, selectedScore: newSelectedScore }));
+        updateParticipant({ selectedScore: newSelectedScore });
     }
 
-    const unsubscribe = selectedParticipant.subscribe(value => {
-		updateParticipant({ ready: value?.ready, selectedScore: value?.selectedScore });
-	});
+    const toggleReady = () => {
+        updateParticipant({ ready: !selectedParticipant.ready });
+    }
 
     onMount(() => {
-        if($selectedParticipant.selectedScore){
-            selectedParticipant.update(participant => ({ ...participant, selectedScore: null }));
+        if(selectedParticipant.selectedScore){
+            updateParticipant({ selectedScore: null });
         }else{
-            if($selectedParticipant.ready && !$selectedParticipant.selectedScore){
-                selectedParticipant.update(participant => ({ ...participant, ready: false }));
+            if(selectedParticipant.ready && !selectedParticipant.selectedScore){
+                updateParticipant({ ready: false });
             }
         }
     });
-    onDestroy(() => unsubscribe());
 </script>
 
 <p>Here you can choose the score and check the "ready" switch when you feel safe</p>
@@ -48,13 +46,13 @@
 <br>
 
 <h1 class="text-lg text-center font-thin mb-10">
-    Playing as {$selectedParticipant.id} - {$selectedParticipant.name}
+    Playing as {selectedParticipant.id} - {selectedParticipant.name}
 </h1>
 
 <div class="grid grid-cols-10 gap-2">
     {#each fibonacci as pointNumber}
         <button 
-            class={`btn bg-secondary text-secondary-content${pointNumber === $selectedParticipant.selectedScore ? ' bg-success' : ''}`} 
+            class={`btn bg-secondary text-secondary-content${pointNumber === selectedParticipant.selectedScore ? ' bg-success' : ''}`} 
             on:click={() => handleSelectScore(pointNumber)}>
             {pointNumber}
         </button>
@@ -66,8 +64,9 @@
         <span class="label-text">I'm f#ck!ng ready!!</span>
         <input 
             type="checkbox" 
-            bind:checked={$selectedParticipant.ready} 
-            disabled={!$selectedParticipant.selectedScore}
+            on:change={toggleReady}
+            checked={selectedParticipant.ready} 
+            disabled={!selectedParticipant.selectedScore}
             class="toggle toggle-accent" />
     </label>
 </div>

@@ -3,6 +3,11 @@
 	import '../app.css';
 </script>
 
+<svelte:head>
+	<title>Task Scorer</title>
+	<meta name="description" content="Peer to peer application for scoring tasks for free!!" />
+</svelte:head>
+
 <Header />
 
 <main class="flex-1 flex center">

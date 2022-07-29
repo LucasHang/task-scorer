@@ -1,10 +1,8 @@
 <script lang="ts">
-    import type { IGunInstance } from 'gun/types';
     import type Participant from '$lib/types/participant';
     import { GUN_PARTICIPANTS_KEY } from '$lib/vars';
-    import { selectedParticipant } from '$lib/stores';
+    import gun from '$lib/client';
 
-    export let gun: IGunInstance<any>;
     export let participants: Array<Participant>;
 
     let newParticipant = '';
@@ -33,13 +31,6 @@
             gunParticipants.get(p.id).put(null);
         });
     }
-
-    const enterAs = (key: string) => {
-        const participant = participants.find(p => p.id === key);
-        if(participant){
-            selectedParticipant.set(participant);
-        }
-    }
 </script>
 
 
@@ -62,9 +53,9 @@
     <ul class="menu bg-base-100 text-secondary-content p-2">
         {#each participants as participant (participant.id)}
             <li class="flex flex-row items-center gap-2 bg-primary">
-                <button on:click={() => enterAs(participant.id)}>
+                <a href={`/scoring/${participant.id}`}>
                     {participant.id} - {participant.name}
-                </button>
+                </a>
             </li>    
         {/each}
     </ul>

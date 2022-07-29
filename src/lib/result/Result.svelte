@@ -1,19 +1,17 @@
 <script lang="ts">
-    import type { IGunInstance } from "gun/types";
     import type Participant from "$lib/types/participant";
     import { GUN_PARTICIPANTS_KEY } from "$lib/vars";
-    import { selectedParticipant } from '$lib/stores';
+    import gun from "$lib/client";
 
-    export let gun: IGunInstance<any>;
     export let participants: Array<Participant>;
 
     const reset = () => {
-        selectedParticipant.update(participant => ({ ...participant, ready: false, selectedScore: null }));
-
         const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
         participants.forEach(p => {
             gunParticipants.get(p.id).put({ ready: false, selectedScore: null });
         });
+
+        history.back();
     }
 
     const smallest = Math.min(...participants.map(p => p.selectedScore || 0));
