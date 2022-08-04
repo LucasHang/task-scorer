@@ -1,6 +1,6 @@
 <script lang="ts">
     import type Participant from '$lib/types/participant';
-    import { GUN_PARTICIPANTS_KEY } from '$lib/vars';
+    import { GUN_PARTICIPANTS_COUNTER_KEY, GUN_PARTICIPANTS_KEY } from '$lib/vars';
     import gun from '$lib/client';
 
     export let participants: Array<Participant>;
@@ -22,6 +22,8 @@
             selectedScore: null,
         });
 
+        gun.get(GUN_PARTICIPANTS_COUNTER_KEY).put({ counter: participants.length + 1 });
+
         newParticipant = '';
     }
 
@@ -30,6 +32,8 @@
         participants.forEach(p => {
             gunParticipants.get(p.id).put(null);
         });
+
+        gun.get(GUN_PARTICIPANTS_COUNTER_KEY).put({ counter: 0 });
     }
 </script>
 

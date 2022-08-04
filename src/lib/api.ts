@@ -1,6 +1,6 @@
 import gun from './client';
 import type Participant from './types/participant';
-import { GUN_PARTICIPANTS_KEY } from './vars';
+import { GUN_PARTICIPANTS_COUNTER_KEY, GUN_PARTICIPANTS_KEY } from './vars';
 
 export function watchParticipants(
 	participants: Array<Participant>,
@@ -32,5 +32,17 @@ export function watchParticipants(
 			}
 
 			onChange(participantsCopy);
+		});
+}
+
+export function watchParticipantsCounter(onChange: (counter: number) => void) {
+	gun
+		.get(GUN_PARTICIPANTS_COUNTER_KEY)
+		.map()
+		.on((data) => {
+			console.log('watchParticipantsCounter', data);
+			if (data !== null && data !== undefined) {
+				onChange(data?.counter ? data?.counter : data);
+			}
 		});
 }

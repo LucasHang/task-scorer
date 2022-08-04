@@ -6,26 +6,37 @@
     import type Participant from '$lib/types/participant';
 
     import Scorer from '$lib/scorer/Scorer.svelte';
-    import { watchParticipants } from '$lib/api';
+    import { watchParticipants, watchParticipantsCounter } from '$lib/api';
 
+    let participantsCounterStore: number = 0;
     let participantsStore: Array<Participant> = [];
 
     onMount(() => {
-        console.log('page', $page.params.participant);
+        watchParticipantsCounter(newCounter => {
+            participantsCounterStore = newCounter;
+        });
 
         watchParticipants(participantsStore, newParticipants => {
             participantsStore = newParticipants;
         });
 	});
 
+    const checkAllReady = (participants: Array<Participant>, counter: number) => {
+        if(counter === 0 || !participants.length){
+            return
+        }
+
+        const ready = participants.filter(p => p.ready && p.selectedScore);
+
+        if(ready.length === counter){
+            goto('/result');
+        }
+    }
+
     $: participants = participantsStore;
     $: selectedParticipant = participants.find(p => p.id === $page.params.participant);
 
-    $: allParticipantsReady = 
-        participants.length > 0 && 
-        !participants.find(item => !item.ready || !item.selectedScore);
-
-    $: allParticipantsReady && goto('/result');
+    $: checkAllReady(participants, participantsCounterStore);
 </script>
 
 <section>
