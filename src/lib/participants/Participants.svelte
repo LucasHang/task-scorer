@@ -56,8 +56,8 @@
 
     <ul class="menu bg-base-100 text-secondary-content p-2">
         {#each participants as participant (participant.id)}
-            <li class="flex flex-row items-center gap-2 bg-primary">
-                <a href={`/scoring/${participant.id}`}>
+            <li class="bg-primary">
+                <a href={`/scoring/${participant.id}`} class="flex justify-center">
                     {participant.id} - {participant.name}
                 </a>
             </li>    

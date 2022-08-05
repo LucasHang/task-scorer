@@ -45,42 +45,44 @@
 <p>When all players are ready the result will be shown</p>
 <br>
 
-<h1 class="text-lg text-center font-thin mb-10">
-    Playing as {selectedParticipant.id} - {selectedParticipant.name}
-</h1>
+<div class="flex flex-col justify-center items-center bg-base-200 shadow-xl rounded-box py-3 px-6 my-3">
+    <h1 class="text-lg text-center font-thin mb-6">
+        Playing as {selectedParticipant.id} - {selectedParticipant.name}
+    </h1>
 
-<div class="grid grid-cols-10 gap-2">
-    {#each fibonacci as pointNumber}
-        <button 
-            class={`btn bg-secondary text-secondary-content${pointNumber === selectedParticipant.selectedScore ? ' bg-success' : ''}`} 
-            on:click={() => handleSelectScore(pointNumber)}>
-            {pointNumber}
-        </button>
-    {/each}
-</div>
+    <div class="grid grid-cols-10 gap-2">
+        {#each fibonacci as pointNumber}
+            <button 
+                class={`btn bg-secondary text-secondary-content${pointNumber === selectedParticipant.selectedScore ? ' bg-success' : ''}`} 
+                on:click={() => handleSelectScore(pointNumber)}>
+                {pointNumber}
+            </button>
+        {/each}
+    </div>
 
-<div class="form-control w-48 m-4">
-    <label class="cursor-pointer label">
-        <span class="label-text">I'm f#ck!ng ready!!</span>
-        <input 
-            type="checkbox" 
-            on:change={toggleReady}
-            checked={selectedParticipant.ready} 
-            disabled={!selectedParticipant.selectedScore}
-            class="toggle toggle-accent" />
-    </label>
+    <div class="form-control w-48 mt-4">
+        <label class="cursor-pointer label">
+            <span class="label-text">I'm f#ck!ng ready!!</span>
+            <input 
+                type="checkbox" 
+                on:change={toggleReady}
+                checked={selectedParticipant.ready} 
+                disabled={!selectedParticipant.selectedScore}
+                class="toggle toggle-accent" />
+        </label>
+    </div>
 </div>
 
 <ul class="menu p-2 m-4">
     {#each participants as participant (participant.id)}
         <li class="bg-ghost">
-            <div class="flex flex-row items-center gap-2">
+            <div class="flex flex-row justify-center items-center gap-2">
                 {participant.id} - {participant.name}
 
                 {#if participant.ready} 
                     <div class="badge badge-accent">ready</div> 
                 {:else} 
-                    <div class="badge">matutating...</div>
+                    <div class="badge">thinking...</div>
                 {/if}
             </div>
         </li>    
