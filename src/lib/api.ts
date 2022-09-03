@@ -1,6 +1,7 @@
 import gun from './client';
 import type Participant from './types/participant';
-import { GUN_PARTICIPANTS_COUNTER_KEY, GUN_PARTICIPANTS_KEY } from './vars';
+import type Party from './types/party';
+import { GUN_PARTICIPANTS_COUNTER_KEY, GUN_PARTICIPANTS_KEY, GUN_PARTIES_KEY } from './vars';
 
 export function watchParticipants(
 	participants: Array<Participant>,
@@ -12,9 +13,7 @@ export function watchParticipants(
 		.get(GUN_PARTICIPANTS_KEY)
 		.map()
 		.on((data, key) => {
-			console.log('data', data);
 			const existent = participantsCopy.find((p) => p.id === key);
-			console.log('existent', existent);
 
 			if (data) {
 				if (existent) {
@@ -40,9 +39,30 @@ export function watchParticipantsCounter(onChange: (counter: number) => void) {
 		.get(GUN_PARTICIPANTS_COUNTER_KEY)
 		.map()
 		.on((data) => {
-			console.log('watchParticipantsCounter', data);
 			if (data !== null && data !== undefined) {
 				onChange(data?.counter ? data?.counter : data);
 			}
+		});
+}
+
+export function watchParty(
+	partyId: string,
+	onChange: (updatedParty: Party | null | undefined) => void
+) {
+	gun
+		.get(GUN_PARTIES_KEY)
+		.get(partyId)
+		.on((data, key) => {
+			console.log('🚀 ~ file: api.ts ~ line 57 ~ .on ~ data, key', data, key);
+
+			if (data === null || data === undefined) {
+				onChange(data);
+				return;
+			}
+
+			onChange({
+				...data,
+				id: key
+			});
 		});
 }

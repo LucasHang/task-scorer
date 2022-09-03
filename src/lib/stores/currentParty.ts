@@ -1,11 +1,7 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/env';
 import { LOCAL_STORAGE_PARTY_KEY } from '$lib/vars';
-
-interface CurrentParty {
-	partyId: string;
-	participantId?: string;
-}
+import type CurrentParty from '$lib/types/currentParty';
 
 let currentPartyStorage: string | null = null;
 

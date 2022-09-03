@@ -1,23 +1,30 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
-
-    import type Participant from '$lib/types/participant';
+    import { goto } from '$app/navigation';
 
     import Participants from '$lib/participants/Participants.svelte';
-    import { watchParticipants } from '$lib/api';
+    import { watchParty } from '$lib/api';
+    import type Party from '$lib/types/party';
+    import { currentParty } from '$lib/stores/currentParty';
 
-    let participantsStore: Array<Participant> = [];
+    let partyStore: Party | null = null;
 
     onMount(() => {
-        watchParticipants(participantsStore, newParticipants => {
-            participantsStore = newParticipants;
+        watchParty($page.params.party, updatedParty => {
+            if(!updatedParty){
+                console.error('Party not found!');
+                currentParty.set(null);
+
+                /** @todo Wont be needed when currentParty becomes an auth context */
+                goto('/');
+            }else{
+                partyStore = updatedParty;
+            }
         });
 	});
 
-    console.log('$page.params.party', $page.params.party);
-
-    $: participants = participantsStore;
+    $: participants = partyStore?.participants || [];
 </script>
 
 <section>

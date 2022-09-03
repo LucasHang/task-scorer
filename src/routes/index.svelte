@@ -38,7 +38,7 @@
         }
 
         const result = gun.get(GUN_PARTIES_KEY).set({
-            name: newPartyName
+            name: newPartyName,
         });
 
         result.once((_, key) => {
