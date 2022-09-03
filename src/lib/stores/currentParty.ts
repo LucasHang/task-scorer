@@ -4,7 +4,7 @@ import { LOCAL_STORAGE_PARTY_KEY } from '$lib/vars';
 
 interface CurrentParty {
 	partyId: string;
-	participantId: string;
+	participantId?: string;
 }
 
 let currentPartyStorage: string | null = null;

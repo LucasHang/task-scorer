@@ -5,28 +5,50 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
-
+    
+    import gun from "$lib/client";
     import { currentParty } from "$lib/stores/currentParty";
+    import { GUN_PARTIES_KEY } from "$lib/vars";
 
     let partyKey = '';
-    let partyKeyPlaceholderSuffix = '';
+    let partyKeyPlaceholder = 'Party key goes here';
 
     let newPartyName = '';
-    let newPartyNamePlaceholderSuffix = '';
+    let newPartyNamePlaceholder = 'Party name goes here';
 
     onMount(() => {
-        if($currentParty?.partyId){
-            goto(`/parties/${$currentParty.partyId}`);
-        }
+        gun.get(GUN_PARTIES_KEY).map().on((data, key) => {
+			console.log('gunParties', data, key);
+		});
     });
 
     const joinParty = () => {
-        if(!partyKey) {
-            partyKeyPlaceholderSuffix += ' !';
+        if( !partyKey ) {
+            partyKeyPlaceholder += ' !';
             return;
         }
 
-        goto(`/parties/${partyKey}`);
+        currentParty.set({ partyId: partyKey });
+    }
+
+    const createParty = () => {
+        if( !newPartyName ) {
+            newPartyNamePlaceholder += ' !';
+            return;
+        }
+
+        const result = gun.get(GUN_PARTIES_KEY).set({
+            name: newPartyName
+        });
+
+        result.once((_, key) => {
+            currentParty.set({ partyId: key });
+        });
+    }
+
+    /** @todo Probably should be a auth context around all pages */
+    $: if($currentParty?.partyId){
+        goto(`/parties/${$currentParty.partyId}`);
     }
 </script>
 
@@ -43,7 +65,7 @@
                 <div class="card-actions justify-end">
                     <input 
                         type="text" 
-                        placeholder={`Party key goes here${partyKeyPlaceholderSuffix}`} 
+                        placeholder={partyKeyPlaceholder} 
                         class="input input-ghost flex-1" 
                         bind:value={partyKey} 
                     />
@@ -66,12 +88,12 @@
                 <div class="card-actions justify-end">
                     <input 
                         type="text" 
-                        placeholder={`Party name goes here${newPartyNamePlaceholderSuffix}`} 
+                        placeholder={newPartyNamePlaceholder} 
                         class="input input-ghost flex-1" 
                         bind:value={newPartyName} 
                     />
 
-                    <button class="btn btn-primary" on:click={() => console.log('newPartyName', newPartyName)}>Throw</button>
+                    <button class="btn btn-primary" on:click={createParty}>Throw</button>
                 </div>
             </div>
         </div>
