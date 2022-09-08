@@ -28,7 +28,7 @@
             return;
         }
 
-        currentParty.set({ partyId: partyKey });
+        currentParty.set({ partyId: partyKey, role: 'guest' });
     }
 
     const createParty = () => {
@@ -42,7 +42,7 @@
         });
 
         result.once((_, key) => {
-            currentParty.set({ partyId: key });
+            currentParty.set({ partyId: key, role: 'host' });
         });
     }
 

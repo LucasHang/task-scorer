@@ -3,5 +3,4 @@ export default interface Participant {
 	name: string;
 	ready: boolean;
 	selectedScore: number | null;
-	role: 'host' | 'guest';
 }

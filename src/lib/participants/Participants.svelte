@@ -1,8 +1,12 @@
 <script lang="ts">
-    import type Participant from '$lib/types/participant';
-    import { GUN_PARTICIPANTS_COUNTER_KEY, GUN_PARTICIPANTS_KEY } from '$lib/vars';
-    import gun from '$lib/client';
+    import { goto } from '$app/navigation';
 
+    import gun from '$lib/client';
+    import { GUN_PARTIES_KEY } from '$lib/vars';
+    import { currentParty } from '$lib/stores/currentParty';
+    import type Participant from '$lib/types/participant';
+
+    export let partyId: string;
     export let participants: Array<Participant>;
 
     let newParticipant = '';
@@ -11,29 +15,31 @@
         if(!newParticipant) return;
 
         if(participants.find(p => p.name === newParticipant)){
-            console.info('Participant already in!!');
+            window.alert(`Participant "${newParticipant}" already in!!`);
             return;
         }
 
-        const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
+        const gunParticipants = gun.get(GUN_PARTIES_KEY).get(partyId).get('participants');
         gunParticipants.set({
             name: newParticipant,
             ready: false,
             selectedScore: null,
         });
 
-        gun.get(GUN_PARTICIPANTS_COUNTER_KEY).put({ counter: participants.length + 1 });
-
         newParticipant = '';
     }
 
-    const resetScorer = () => {
-        const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
-        participants.forEach(p => {
-            gunParticipants.get(p.id).put(null);
-        });
+    const leaveParty = () => {
+        currentParty.set(null);
 
-        gun.get(GUN_PARTICIPANTS_COUNTER_KEY).put({ counter: 0 });
+        /** @todo Wont be needed when currentParty becomes an auth context */
+        goto('/');
+    }
+
+    const endParty = () => {
+        // Parties set should be already being listened, so we only have
+        // to kill it on gun to a `party over` behavior be triggered
+        gun.get(GUN_PARTIES_KEY).get(partyId).put(null);
     }
 </script>
 
@@ -44,7 +50,7 @@
     <input
         type="text"
         name="participant_name"
-        placeholder="Tell me your name"
+        placeholder="Tell me your nickname"
         class="input input-bordered"
         bind:value={newParticipant}
     />
@@ -65,4 +71,12 @@
     </ul>
 </div>
 
-<button class="btn m-2" type="button" on:click={resetScorer}>END the party</button>
+{#if $currentParty?.role === 'host'}
+    <button class="btn btn-outline btn-error m-2" type="button" on:click={endParty}>
+        END the party
+    </button>
+{:else}
+    <button class="btn btn-outline btn-error m-2" type="button" on:click={leaveParty}>
+        LEAVE the party
+    </button>
+{/if}
