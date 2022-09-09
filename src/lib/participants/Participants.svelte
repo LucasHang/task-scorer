@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-
     import gun from '$lib/client';
     import { GUN_PARTIES_KEY } from '$lib/vars';
     import { currentParty } from '$lib/stores/currentParty';
@@ -31,9 +29,6 @@
 
     const leaveParty = () => {
         currentParty.set(null);
-
-        /** @todo Wont be needed when currentParty becomes an auth context */
-        goto('/');
     }
 
     const endParty = () => {

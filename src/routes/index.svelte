@@ -4,7 +4,6 @@
 
 <script lang="ts">
     import { onMount } from "svelte";
-    import { goto } from "$app/navigation";
     
     import gun from "$lib/client";
     import { currentParty } from "$lib/stores/currentParty";
@@ -44,11 +43,6 @@
         result.once((_, key) => {
             currentParty.set({ partyId: key, role: 'host' });
         });
-    }
-
-    /** @todo Probably should be a auth context around all pages */
-    $: if($currentParty?.partyId){
-        goto(`/parties/${$currentParty.partyId}`);
     }
 </script>
 

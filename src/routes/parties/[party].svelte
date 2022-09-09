@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import { page } from '$app/stores';
-    import { goto } from '$app/navigation';
 
     import { getParty, watchParty } from '$lib/api';
     import { currentParty } from '$lib/stores/currentParty';
@@ -16,9 +15,6 @@
         window.alert(`Party "${partyId}" is over!`)
                         
         currentParty.set(null);
-
-        /** @todo Wont be needed when currentParty becomes an auth context */
-        goto('/');
     }
 
     onMount(() => {
