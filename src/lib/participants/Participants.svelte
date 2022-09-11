@@ -1,7 +1,6 @@
 <script lang="ts">
     import gun from '$lib/client';
     import { GUN_PARTIES_KEY } from '$lib/vars';
-    import { currentParty } from '$lib/stores/currentParty';
     import type Participant from '$lib/types/participant';
 
     export let partyId: string;
@@ -26,18 +25,7 @@
 
         newParticipant = '';
     }
-
-    const leaveParty = () => {
-        currentParty.set(null);
-    }
-
-    const endParty = () => {
-        // Parties set should be already being listened, so we only have
-        // to kill it on gun to a `party over` behavior be triggered
-        gun.get(GUN_PARTIES_KEY).get(partyId).put(null);
-    }
 </script>
-
 
 <p>If you can't find your name, fill the field and press the button to add it to the players list</p>
 <br>
@@ -65,13 +53,3 @@
         {/each}
     </ul>
 </div>
-
-{#if $currentParty?.role === 'host'}
-    <button class="btn btn-outline btn-error m-2" type="button" on:click={endParty}>
-        END the party
-    </button>
-{:else}
-    <button class="btn btn-outline btn-error m-2" type="button" on:click={leaveParty}>
-        LEAVE the party
-    </button>
-{/if}
