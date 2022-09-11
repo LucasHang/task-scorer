@@ -4,12 +4,15 @@ import type Party from './types/party';
 import { GUN_PARTICIPANTS_COUNTER_KEY, GUN_PARTICIPANTS_KEY, GUN_PARTIES_KEY } from './vars';
 
 export function watchParticipants(
+	partyId: string,
 	participants: Array<Participant>,
 	onChange: (participants: Array<Participant>) => void
 ) {
 	let participantsCopy = [...participants];
 
 	gun
+		.get(GUN_PARTIES_KEY)
+		.get(partyId)
 		.get(GUN_PARTICIPANTS_KEY)
 		.map()
 		.on((data, key) => {
@@ -51,7 +54,7 @@ export function getParty(partyId: string): Promise<Party> {
 			.get(GUN_PARTIES_KEY)
 			.get(partyId)
 			.once((data, key) => {
-				console.log('🚀 ~ file: api.ts ~ getParty ~ data, key', data, key);
+				// console.log('🚀 ~ file: api.ts ~ getParty ~ data, key', data, key);
 
 				if (data === null || data === undefined) {
 					reject('Not found');
@@ -74,7 +77,7 @@ export function watchParty(
 		.get(GUN_PARTIES_KEY)
 		.get(partyId)
 		.on((data, key) => {
-			console.log('🚀 ~ file: api.ts ~ watchParty ~ data, key', data, key);
+			// console.log('🚀 ~ file: api.ts ~ watchParty ~ data, key', data, key);
 
 			if (data === null || data === undefined) {
 				onChange(data);
@@ -82,8 +85,8 @@ export function watchParty(
 			}
 
 			onChange({
-				...data,
-				id: key
+				id: key,
+				name: data.name
 			});
 		});
 }
