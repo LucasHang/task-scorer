@@ -54,8 +54,6 @@ export function getParty(partyId: string): Promise<Party> {
 			.get(GUN_PARTIES_KEY)
 			.get(partyId)
 			.once((data, key) => {
-				// console.log('🚀 ~ file: api.ts ~ getParty ~ data, key', data, key);
-
 				if (data === null || data === undefined) {
 					reject('Not found');
 					return;
@@ -77,8 +75,6 @@ export function watchParty(
 		.get(GUN_PARTIES_KEY)
 		.get(partyId)
 		.on((data, key) => {
-			// console.log('🚀 ~ file: api.ts ~ watchParty ~ data, key', data, key);
-
 			if (data === null || data === undefined) {
 				onChange(data);
 				return;
@@ -86,7 +82,8 @@ export function watchParty(
 
 			onChange({
 				id: key,
-				name: data.name
+				name: data.name,
+				participantsCounter: data.participantsCounter
 			});
 		});
 }

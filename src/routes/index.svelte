@@ -15,12 +15,6 @@
     let newPartyName = '';
     let newPartyNamePlaceholder = 'Party name goes here';
 
-    onMount(() => {
-        gun.get(GUN_PARTIES_KEY).map().on((data, key) => {
-			console.log('gunParties', data, key);
-		});
-    });
-
     const joinParty = () => {
         if( !partyKey ) {
             partyKeyPlaceholder += ' !';
@@ -38,12 +32,19 @@
 
         const result = gun.get(GUN_PARTIES_KEY).set({
             name: newPartyName,
+            participantsCounter: 0,
         });
 
         result.once((_, key) => {
             currentParty.set({ partyId: key, role: 'host' });
         });
     }
+
+    onMount(() => {
+        gun.get(GUN_PARTIES_KEY).map().on((data, key) => {
+			console.log('Available parties to join', data, key);
+		});
+    });
 </script>
 
 <section>

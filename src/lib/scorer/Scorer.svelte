@@ -1,29 +1,26 @@
 <script lang="ts">
     import { onMount } from 'svelte';
     import type Participant from "$lib/types/participant";
-    import { GUN_PARTICIPANTS_KEY } from '$lib/vars';
+    import { GUN_PARTIES_KEY, GUN_PARTICIPANTS_KEY } from '$lib/vars';
     import gun from '$lib/client';
 
-    export let selectedParticipant: Participant;
+    export let partyId: string;
     export let participants: Array<Participant>;
+    export let selectedParticipant: Participant;
     
     const fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
     const updateParticipant = (value: Partial<Participant>) => {
-        gun.get(GUN_PARTICIPANTS_KEY).get(selectedParticipant.id).put({ ...value });
+        gun.get(GUN_PARTIES_KEY).get(partyId).get(GUN_PARTICIPANTS_KEY).get(selectedParticipant.id).put({ ...value });
     }
 
     const handleSelectScore = (value: number) => {
-        if(selectedParticipant.ready){
-            updateParticipant({ ready: false });
-        }
-
         let newSelectedScore: number | null = value;
         if(value === selectedParticipant.selectedScore){
             newSelectedScore = null;
         }
 
-        updateParticipant({ selectedScore: newSelectedScore });
+        updateParticipant({ selectedScore: newSelectedScore, ready: false });
     }
 
     const toggleReady = () => {
@@ -31,13 +28,7 @@
     }
 
     onMount(() => {
-        if(selectedParticipant.selectedScore){
-            updateParticipant({ selectedScore: null });
-        }else{
-            if(selectedParticipant.ready && !selectedParticipant.selectedScore){
-                updateParticipant({ ready: false });
-            }
-        }
+        updateParticipant({ selectedScore: null, ready: false });
     });
 </script>
 

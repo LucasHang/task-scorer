@@ -3,7 +3,7 @@
     import { page } from '$app/stores';
 
     import gun from '$lib/client';
-    import { GUN_PARTIES_KEY } from '$lib/vars';
+    import { GUN_PARTIES_KEY, GUN_PARTICIPANTS_KEY } from '$lib/vars';
     import { getParty, watchParticipants, watchParty } from '$lib/api';
     import { currentParty } from '$lib/stores/currentParty';
     import type Party from '$lib/types/party';
@@ -16,8 +16,9 @@
     let partyStore: Party | null = null;
     let participantsStore: Array<Participant> = [];
 
+    /** @todo abstrair processo em hook */
     const handlePartyNotFound = (partyId: string) => {
-        window.alert(`Party "${partyId}" is over!`)
+        console.log(`[Parties]: Party "${partyId}" is over!`)
                         
         currentParty.set(null);
     }
@@ -39,7 +40,21 @@
     }
 
     const leaveParty = () => {
-        currentParty.set(null);
+        if($currentParty && $currentParty.participantId){
+            const gunParty = gun.get(GUN_PARTIES_KEY).get($currentParty.partyId);
+
+            const gunParticipant = gunParty.get(GUN_PARTICIPANTS_KEY).get($currentParty.participantId);
+            const result = gunParticipant.put(null);
+
+            result.once(() => {
+                const newCounter = participantsStore.length > 0 ? participantsStore.length - 1 : 0;
+                gunParty.put({ participantsCounter: newCounter });
+            });
+        }else{
+            
+            currentParty.set(null);
+        }
+
     }
 
     const endParty = () => {
@@ -73,7 +88,7 @@
         />
                     
         <Participants 
-            partyId={partyStore.id}
+            party={partyStore}
             participants={participantsStore} 
         />
     {:else}

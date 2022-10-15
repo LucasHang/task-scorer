@@ -1,9 +1,11 @@
 <script lang="ts">
     import gun from '$lib/client';
-    import { GUN_PARTIES_KEY } from '$lib/vars';
+    import { GUN_PARTIES_KEY, GUN_PARTICIPANTS_KEY } from '$lib/vars';
+	import { currentParty } from '$lib/stores/currentParty';
     import type Participant from '$lib/types/participant';
+	import type Party from '$lib/types/party';
 
-    export let partyId: string;
+    export let party: Party;
     export let participants: Array<Participant>;
 
     let newParticipant = '';
@@ -16,11 +18,20 @@
             return;
         }
 
-        const gunParticipants = gun.get(GUN_PARTIES_KEY).get(partyId).get('participants');
-        gunParticipants.set({
+        const gunParty = gun.get(GUN_PARTIES_KEY).get(party.id);
+
+        const gunParticipants = gunParty.get(GUN_PARTICIPANTS_KEY);
+        const result = gunParticipants.set({
             name: newParticipant,
             ready: false,
             selectedScore: null,
+        });
+
+        result.once((data, key) => {
+            console.log('party', party);
+            gunParty.put({ participantsCounter: party.participantsCounter + 1 });
+
+            currentParty.update(state => state && ({ ...state, participantId: key}));
         });
 
         newParticipant = '';
@@ -46,7 +57,7 @@
     <ul class="menu bg-base-100 text-secondary-content p-2">
         {#each participants as participant (participant.id)}
             <li class="bg-primary">
-                <a href={`/scoring/${participant.id}`} class="flex justify-center">
+                <a href={`/parties/${party.id}/scoring/${participant.id}`} class="flex justify-center">
                     {participant.id} - {participant.name}
                 </a>
             </li>    

@@ -6,7 +6,7 @@ Unfortunately, my team run out of free online options for *scoring*, so I made m
 # Tech Stack
 
 I was looking for something fast and new, specially avoiding the need of database and server.
-So for developing the frontend I choose SvelteKit (which I vary much recommend) and for sharing + storing data I used a peer to peer library called [Gun.js](https://gun.eco).
+So for developing the frontend I choose SvelteKit (which I very much recommend) and for sharing + storing data I used a peer to peer library called [Gun.js](https://gun.eco).
 
 # create-svelte
 
