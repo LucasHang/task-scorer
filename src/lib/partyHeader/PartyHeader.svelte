@@ -41,6 +41,10 @@ import type CurrentParty from "$lib/types/currentParty";
     </h1>
 
     {#if role === 'host'}
+        <strong>Party Key: {party.id}</strong>
+    {/if}
+
+    {#if role === 'host'}
         <button class="btn btn-outline btn-error btn-xs mt-2" type="button" on:click={onEnd}>
             END the party
         </button>

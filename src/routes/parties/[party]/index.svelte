@@ -47,14 +47,14 @@
             const result = gunParticipant.put(null);
 
             result.once(() => {
-                const newCounter = participantsStore.length > 0 ? participantsStore.length - 1 : 0;
+                const newCounter = partyStore && partyStore.participantsCounter > 0 ? partyStore.participantsCounter - 1 : 0;
                 gunParty.put({ participantsCounter: newCounter });
+
+                currentParty.set(null)
             });
         }else{
-            
             currentParty.set(null);
         }
-
     }
 
     const endParty = () => {
