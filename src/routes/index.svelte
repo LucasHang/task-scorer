@@ -10,7 +10,7 @@
     import { GUN_PARTIES_KEY } from "$lib/vars";
 
     let partyKey = '';
-    let partyKeyPlaceholder = 'Party key goes here';
+    let partyKeyPlaceholder = 'Party Key goes here';
 
     let newPartyName = '';
     let newPartyNamePlaceholder = 'Party name goes here';

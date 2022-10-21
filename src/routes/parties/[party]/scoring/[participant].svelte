@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
     
-    import { getParty, watchParticipants, watchParty } from '$lib/api';
+    import { getParty, watchParticipants, watchParty, type Listener } from '$lib/api';
 	import { currentParty } from '$lib/stores/currentParty';
     import type Participant from '$lib/types/participant';
 	import type Party from '$lib/types/party';
@@ -13,6 +13,8 @@
 
     let partyStore: Party | null = null;
     let participantsStore: Array<Participant> = [];
+    let partyListener: Listener | null = null;
+    let participantsListener: Listener | null = null;
 
     const handlePartyNotFound = (partyId: string) => {
         console.log(`[Scoring]: Party "${partyId}" is over!`)
@@ -21,7 +23,7 @@
     }
 
     const startWatchingParty = (partyId: string) => {
-        watchParty(partyId, updatedParty => {
+        partyListener = watchParty(partyId, updatedParty => {
             if(!updatedParty){
                 handlePartyNotFound(partyId)
             }else{
@@ -31,7 +33,7 @@
     }
 
     const startWatchingParticipants = (partyId: string) => {
-        watchParticipants(partyId, participantsStore, newParticipants => {
+        participantsListener = watchParticipants(partyId, participantsStore, newParticipants => {
             participantsStore = newParticipants;
         });
     }
@@ -61,6 +63,11 @@
             })
             .catch(() => handlePartyNotFound(partyId));
 	});
+    
+    onDestroy(() => {
+        partyListener?.off();
+        participantsListener?.off();
+    });
 
     $: selectedParticipant = participantsStore.find(p => p.id === $page.params.participant);
 

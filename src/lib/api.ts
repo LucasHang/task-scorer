@@ -1,16 +1,20 @@
 import gun from './client';
 import type Participant from './types/participant';
 import type Party from './types/party';
-import { GUN_PARTICIPANTS_COUNTER_KEY, GUN_PARTICIPANTS_KEY, GUN_PARTIES_KEY } from './vars';
+import { GUN_PARTICIPANTS_KEY, GUN_PARTIES_KEY } from './vars';
+
+export interface Listener {
+	off(): void;
+}
 
 export function watchParticipants(
 	partyId: string,
 	participants: Array<Participant>,
 	onChange: (participants: Array<Participant>) => void
-) {
+): Listener {
 	let participantsCopy = [...participants];
 
-	gun
+	return gun
 		.get(GUN_PARTIES_KEY)
 		.get(partyId)
 		.get(GUN_PARTICIPANTS_KEY)
@@ -37,14 +41,24 @@ export function watchParticipants(
 		});
 }
 
-export function watchParticipantsCounter(onChange: (counter: number) => void) {
-	gun
-		.get(GUN_PARTICIPANTS_COUNTER_KEY)
-		.map()
-		.on((data) => {
-			if (data !== null && data !== undefined) {
-				onChange(data?.counter ? data?.counter : data);
+export function watchParty(
+	partyId: string,
+	onChange: (updatedParty: Party | null | undefined) => void
+): Listener {
+	return gun
+		.get(GUN_PARTIES_KEY)
+		.get(partyId)
+		.on((data, key) => {
+			if (data === null || data === undefined) {
+				onChange(data);
+				return;
 			}
+
+			onChange({
+				id: key,
+				name: data.name,
+				participantsCounter: data.participantsCounter
+			});
 		});
 }
 
@@ -65,25 +79,4 @@ export function getParty(partyId: string): Promise<Party> {
 				});
 			});
 	});
-}
-
-export function watchParty(
-	partyId: string,
-	onChange: (updatedParty: Party | null | undefined) => void
-) {
-	gun
-		.get(GUN_PARTIES_KEY)
-		.get(partyId)
-		.on((data, key) => {
-			if (data === null || data === undefined) {
-				onChange(data);
-				return;
-			}
-
-			onChange({
-				id: key,
-				name: data.name,
-				participantsCounter: data.participantsCounter
-			});
-		});
 }

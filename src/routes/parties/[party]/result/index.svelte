@@ -1,17 +1,19 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     
     import type Participant from '$lib/types/participant';
 	import type Party from '$lib/types/party';
 
-    import { getParty, watchParty, watchParticipants } from '$lib/api';
+    import { getParty, watchParty, watchParticipants, type Listener } from '$lib/api';
 	import { currentParty } from '$lib/stores/currentParty';
     import Result from '$lib/result/Result.svelte';
 	import Loading from '$lib/loading/Loading.svelte';
 
     let partyStore: Party | null = null;
     let participantsStore: Array<Participant> = [];
+    let partyListener: Listener | null = null;
+    let participantsListener: Listener | null = null;
 
     const handlePartyNotFound = (partyId: string) => {
         console.log(`[Result]: Party "${partyId}" is over!`)
@@ -20,7 +22,7 @@
     }
 
     const startWatchingParty = (partyId: string) => {
-        watchParty(partyId, updatedParty => {
+        partyListener = watchParty(partyId, updatedParty => {
             if(!updatedParty){
                 handlePartyNotFound(partyId)
             }else{
@@ -30,7 +32,7 @@
     }
 
     const startWatchingParticipants = (partyId: string) => {
-        watchParticipants(partyId, participantsStore, newParticipants => {
+        participantsListener = watchParticipants(partyId, participantsStore, newParticipants => {
             participantsStore = newParticipants;
         });
     }
@@ -58,6 +60,11 @@
             })
             .catch(() => handlePartyNotFound(partyId));
 	});
+
+    onDestroy(() => {
+        partyListener?.off();
+        participantsListener?.off();
+    });
 
     $: allParticipantsReady = checkAllReady(participantsStore, partyStore?.participantsCounter || 0);
     $: goBackUrl = $currentParty?.participantId ? 
