@@ -1,17 +1,25 @@
 <script lang="ts">
-    import type Participant from "$lib/types/participant";
-    import { GUN_PARTICIPANTS_KEY } from "$lib/vars";
-    import gun from "$lib/client";
+	import { goto } from "$app/navigation";
 
+    import gun from "$lib/client";
+    import { GUN_PARTIES_KEY, GUN_PARTICIPANTS_KEY } from "$lib/vars";
+    import type Participant from "$lib/types/participant";
+	import type CurrentParty from "$lib/types/currentParty";
+
+    export let partyId: string;
     export let participants: Array<Participant>;
+    export let role: CurrentParty['role'];
+    export let goBackUrl: string;
 
     const reset = () => {
-        const gunParticipants = gun.get(GUN_PARTICIPANTS_KEY);
+        const gunParty = gun.get(GUN_PARTIES_KEY).get(partyId);
+        const gunParticipants = gunParty.get(GUN_PARTICIPANTS_KEY);
+
         participants.forEach(p => {
             gunParticipants.get(p.id).put({ ready: false, selectedScore: null });
         });
 
-        history.back();
+        goto(goBackUrl);
     }
 
     const smallest = Math.min(...participants.map(p => p.selectedScore || 0));
@@ -68,4 +76,6 @@
     {/each}
 </ul>
 
-<button class="btn btn-error m-2" type="button" on:click={reset}>Play again</button>
+{#if (role === 'host')}
+    <button class="btn btn-error m-2" type="button" on:click={reset}>Play again</button>
+{/if}

@@ -48,7 +48,6 @@
         }
     }
 
-
     onMount(() => {
         const partyId = $page.params.party;
 
