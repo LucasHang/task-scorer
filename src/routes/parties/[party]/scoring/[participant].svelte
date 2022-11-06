@@ -77,9 +77,9 @@
 <section>
     {#if !!partyStore && !!selectedParticipant}
         <div class="flex flex-col items-center mb-20 mt-4">
-            <h1 class="text-3xl font-bold inline-flex items-center gap-2">
+            <h1 class="text-2xl md:text-3xl font-bold inline-flex text-center justify-center items-center flex-wrap gap-2">
                 OI, you are in "{partyStore.name}" party
-                <svg xmlns="http://www.w3.org/2000/svg" width="52px" height="52px" viewBox="0 0 72 72" id="emoji">
+                <svg xmlns="http://www.w3.org/2000/svg" width="46px" height="46px" viewBox="0 0 72 72" id="emoji">
                     <g id="color">
                     <polygon fill="#F1B31C" stroke="none" points="26.1808,20.1808 38.75,32.75 51.3192,45.3192 29.7894,54.2798 8.2597,63.2403 17.2202,41.7106"/>
                     <polygon fill="#FCEA2B" stroke="none" points="40,35 25.6924,20.6692 16.3914,42.5394 7.0905,64.4095"/>

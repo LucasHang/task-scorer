@@ -32,16 +32,18 @@
     });
 </script>
 
-<p>Here you can choose the score and check the "ready" switch when you feel safe</p>
-<p>When all players are ready the result will be shown</p>
-<br>
+<p class="text-center">
+    Here you can choose the score and check the "ready" switch when you feel safe.<br />
+    When all players are ready the result will be shown.
+</p>
+<br />
 
 <div class="flex flex-col justify-center items-center bg-base-200 shadow-xl rounded-box py-3 px-6 my-3">
     <h1 class="text-lg text-center font-thin mb-6">
         Playing as {selectedParticipant.id} - {selectedParticipant.name}
     </h1>
 
-    <div class="grid grid-cols-10 gap-2">
+    <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
         {#each fibonacci as pointNumber}
             <button 
                 class={`btn bg-secondary text-secondary-content${pointNumber === selectedParticipant.selectedScore ? ' bg-success' : ''}`} 
