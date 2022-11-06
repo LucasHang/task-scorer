@@ -1,12 +1,22 @@
 <script lang="ts">
-import type CurrentParty from "$lib/types/currentParty";
-
+    import type CurrentParty from "$lib/types/currentParty";
     import type Party from "$lib/types/party";
 
     export let party: Party;
     export let role: CurrentParty['role'];
     export let onLeave: () => void;
     export let onEnd: () => void;
+
+    let tipMessage = 'Copy to clipboard';
+
+    function copyPartyKey() {
+        navigator.clipboard.writeText(party.id);
+        tipMessage = 'Copied!';
+    }
+
+    function resetTipMessage() {
+        tipMessage = 'Copy to clipboard'
+    }
 </script>
 
 <div class="flex flex-col items-center mb-20 mt-4">
@@ -41,7 +51,15 @@ import type CurrentParty from "$lib/types/currentParty";
     </h1>
 
     {#if role === 'host'}
-        <strong>Party Key: {party.id}</strong>
+        <strong>
+            Party Key:
+            <div class="tooltip" data-tip={tipMessage}>
+                <button class="btn btn-sm btn-ghost gap-2" on:click={copyPartyKey} on:mouseenter={resetTipMessage}>
+                    {party.id}
+                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"></path></svg>
+                </button>
+            </div>
+        </strong>
     {/if}
 
     {#if role === 'host'}
