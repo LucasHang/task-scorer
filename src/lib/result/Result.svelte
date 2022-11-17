@@ -31,7 +31,7 @@
     const highest = Math.max(...participants.map(p => p.selectedScore || 0));
 </script>
 
-<div class="stats shadow">
+<div class="stats stats-vertical lg:stats-horizontal shadow">
     <div class="stat place-items-center">
         <div class="stat-title">The smallest score</div>
         <div class="stat-value">
