@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
@@ -116,4 +116,4 @@
     {:else}
         <Loading />
     {/if}
-</section>
+</section> -->

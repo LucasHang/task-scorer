@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
     import { onMount, onDestroy } from 'svelte';
     import { page } from '$app/stores';
 
@@ -101,4 +101,4 @@
     {:else}
         <Loading />
     {/if}
-</section>
+</section> -->

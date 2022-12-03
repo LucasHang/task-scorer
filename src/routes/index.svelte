@@ -5,9 +5,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     
-    import gun from "$lib/client";
     import { currentParty } from "$lib/stores/currentParty";
-    import { GUN_PARTIES_KEY } from "$lib/vars";
+	import { getParties, createParty as createPartyApi } from "$lib/api";
 
     let partyKey = '';
     let partyKeyPlaceholder = 'Party Key goes here';
@@ -24,26 +23,23 @@
         currentParty.set({ partyId: partyKey, role: 'guest' });
     }
 
-    const createParty = () => {
+    const createParty = async () => {
         if( !newPartyName ) {
             newPartyNamePlaceholder += ' !';
             return;
         }
 
-        const result = gun.get(GUN_PARTIES_KEY).set({
-            name: newPartyName,
-            participantsCounter: 0,
-        });
+        const newParty = await createPartyApi(newPartyName);
 
-        result.once((_, key) => {
-            currentParty.set({ partyId: key, role: 'host' });
-        });
+        if(newParty){
+            currentParty.set({ partyId: newParty.id, role: 'host' });
+        }
     }
 
     onMount(() => {
-        gun.get(GUN_PARTIES_KEY).map().on((data, key) => {
-			console.log('Available parties to join', data, key);
-		});
+        getParties()
+            .then(data => console.info('Available parties to join:', data))
+            .catch(error => console.error('Error retrieving available parties:', error));
     });
 </script>
 

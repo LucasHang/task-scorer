@@ -4,5 +4,4 @@ export default interface Party {
 	id: string;
 	name: string;
 	participants?: Array<Participant>;
-	participantsCounter: number;
 }
