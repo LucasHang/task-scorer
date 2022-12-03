@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, QueryDocumentSnapshot } from 'firebase/firestore';
+import { getFirestore, collection, doc, QueryDocumentSnapshot } from 'firebase/firestore';
 import type Party from './types/party';
 
 const firebaseConfig = {
@@ -21,7 +21,8 @@ const converter = <T>() => ({
 });
 
 const collections = {
-	parties: collection(db, 'parties').withConverter(converter<Party>())
+	parties: collection(db, 'parties').withConverter(converter<Party>()),
+	party: (id: string) => doc(db, 'parties', id).withConverter(converter<Party>())
 };
 
 export default app;

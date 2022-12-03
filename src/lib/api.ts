@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { getDocs, addDoc } from 'firebase/firestore';
+import { getDocs, setDoc, getDoc } from 'firebase/firestore';
 import { collections } from './client';
 
 export async function getParties() {
@@ -15,7 +15,7 @@ export async function createParty(name: string) {
 			participants: []
 		};
 
-		await addDoc(collections.parties, newParty);
+		await setDoc(collections.party(newParty.id), newParty);
 
 		console.info('Party created with id:', newParty.id);
 
@@ -23,4 +23,9 @@ export async function createParty(name: string) {
 	} catch (error) {
 		console.error('Error creating party:', error);
 	}
+}
+
+export async function getParty(id: string) {
+	const querySnapshot = await getDoc(collections.party(id));
+	return querySnapshot.data();
 }

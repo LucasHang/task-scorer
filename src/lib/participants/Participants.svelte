@@ -1,6 +1,4 @@
 <script lang="ts">
-    import gun from '$lib/client';
-    import { GUN_PARTIES_KEY, GUN_PARTICIPANTS_KEY } from '$lib/vars';
 	import { currentParty } from '$lib/stores/currentParty';
     import type Participant from '$lib/types/participant';
 	import type Party from '$lib/types/party';
@@ -12,29 +10,29 @@
     let newParticipant = '';
 
     const handleSubmit = () => {
-        if(!newParticipant) return;
+        // if(!newParticipant) return;
 
-        if(participants.find(p => p.name === newParticipant)){
-            window.alert(`Participant "${newParticipant}" already in!!`);
-            return;
-        }
+        // if(participants.find(p => p.name === newParticipant)){
+        //     window.alert(`Participant "${newParticipant}" already in!!`);
+        //     return;
+        // }
 
-        const gunParty = gun.get(GUN_PARTIES_KEY).get(party.id);
+        // const gunParty = gun.get(GUN_PARTIES_KEY).get(party.id);
 
-        const gunParticipants = gunParty.get(GUN_PARTICIPANTS_KEY);
-        const result = gunParticipants.set({
-            name: newParticipant,
-            ready: false,
-            selectedScore: null,
-        });
+        // const gunParticipants = gunParty.get(GUN_PARTICIPANTS_KEY);
+        // const result = gunParticipants.set({
+        //     name: newParticipant,
+        //     ready: false,
+        //     selectedScore: null,
+        // });
 
-        result.once((_, key) => {
-            gunParty.put({ participantsCounter: party.participantsCounter + 1 });
+        // result.once((_, key) => {
+        //     gunParty.put({ participantsCounter: party.participantsCounter + 1 });
 
-            joinAs(key);
-        });
+        //     joinAs(key);
+        // });
 
-        newParticipant = '';
+        // newParticipant = '';
     }
 
     const joinAs = (participantId: string) => {
