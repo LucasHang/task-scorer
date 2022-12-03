@@ -117,3 +117,15 @@ export async function updateParticipant(
 		console.error('Error updating participant:', error);
 	}
 }
+
+export async function updateParticipants(partyId: string, newParticipants: Array<Participant>) {
+	try {
+		await updateDoc(collections.party(partyId), {
+			participants: newParticipants
+		});
+
+		console.info('Participants updated with success:', newParticipants);
+	} catch (error) {
+		console.error('Error updating participants:', error);
+	}
+}

@@ -48,7 +48,7 @@
 
     const endParty = async () => {
         // Parties set should be already being listened, so we only have
-        // to kill it on gun to a `party over` behavior be triggered
+        // to kill it to a `party over` behavior be triggered
         await deleteParty($page.params.party);
     }
 

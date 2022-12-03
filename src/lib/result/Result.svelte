@@ -1,23 +1,22 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-
-    import gun from "$lib/client";
-    import { GUN_PARTIES_KEY, GUN_PARTICIPANTS_KEY } from "$lib/vars";
+    
     import type Participant from "$lib/types/participant";
 	import type CurrentParty from "$lib/types/currentParty";
+
+	import { updateParticipants } from "$lib/api";
 
     export let partyId: string;
     export let participants: Array<Participant>;
     export let role: CurrentParty['role'];
     export let goBackUrl: string;
 
-    const reset = () => {
-        const gunParty = gun.get(GUN_PARTIES_KEY).get(partyId);
-        const gunParticipants = gunParty.get(GUN_PARTICIPANTS_KEY);
-
-        participants.forEach(p => {
-            gunParticipants.get(p.id).put({ ready: false, selectedScore: null });
+    const reset = async () => {
+        const newParticipants = participants.map(participant => {
+            return { ...participant, ready: false, selectedScore: null }
         });
+
+        await updateParticipants(partyId, newParticipants);
 
         goto(goBackUrl);
     }
