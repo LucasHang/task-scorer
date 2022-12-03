@@ -1,6 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
-import { getDocs, setDoc, getDoc } from 'firebase/firestore';
+import {
+	getDocs,
+	setDoc,
+	getDoc,
+	deleteDoc,
+	onSnapshot,
+	updateDoc,
+	arrayRemove,
+	arrayUnion
+} from 'firebase/firestore';
 import { collections } from './client';
+import type Party from './types/party';
+import type Participant from './types/participant';
 
 export async function getParties() {
 	const querySnapshot = await getDocs(collections.parties);
@@ -28,4 +39,55 @@ export async function createParty(name: string) {
 export async function getParty(id: string) {
 	const querySnapshot = await getDoc(collections.party(id));
 	return querySnapshot.data();
+}
+
+export async function deleteParty(id: string) {
+	try {
+		await deleteDoc(collections.party(id));
+
+		console.info('Party deleted with success:', id);
+	} catch (error) {
+		console.error('Error deleting party:', error);
+	}
+}
+
+export function watchParty(id: string, onChange: (data: Party | undefined) => void) {
+	const unsubscribe = onSnapshot(collections.party(id), (doc) => {
+		onChange(doc.data());
+	});
+
+	return unsubscribe;
+}
+
+export async function deleteParticipant(partyId: string, participant: Participant) {
+	try {
+		await updateDoc(collections.party(partyId), {
+			participants: arrayRemove(participant)
+		});
+
+		console.info('Participant deleted with success:', participant);
+	} catch (error) {
+		console.error('Error deleting participant:', error);
+	}
+}
+
+export async function createParticipant(partyId: string, participantName: string) {
+	try {
+		const newParticipant: Participant = {
+			id: uuidv4(),
+			name: participantName,
+			ready: false,
+			selectedScore: null
+		};
+
+		await updateDoc(collections.party(partyId), {
+			participants: arrayUnion(newParticipant)
+		});
+
+		console.info('Participant created with id:', newParticipant.id);
+
+		return newParticipant;
+	} catch (error) {
+		console.error('Error creating participant:', error);
+	}
 }

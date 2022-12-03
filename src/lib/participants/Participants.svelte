@@ -1,38 +1,28 @@
 <script lang="ts">
-	import { currentParty } from '$lib/stores/currentParty';
-    import type Participant from '$lib/types/participant';
-	import type Party from '$lib/types/party';
 	import { goto } from '$app/navigation';
 
+    import { currentParty } from '$lib/stores/currentParty';
+	import { createParticipant } from '$lib/api';
+	import type Party from '$lib/types/party';
+
     export let party: Party;
-    export let participants: Array<Participant>;
 
     let newParticipant = '';
 
-    const handleSubmit = () => {
-        // if(!newParticipant) return;
+    const handleSubmit = async () => {
+        if(!newParticipant) return;
 
-        // if(participants.find(p => p.name === newParticipant)){
-        //     window.alert(`Participant "${newParticipant}" already in!!`);
-        //     return;
-        // }
+        if(party.participants.find(p => p.name === newParticipant)){
+            window.alert(`Participant "${newParticipant}" already in!!`);
+            return;
+        }
 
-        // const gunParty = gun.get(GUN_PARTIES_KEY).get(party.id);
+        const createdParticipant = await createParticipant(party.id, newParticipant);
 
-        // const gunParticipants = gunParty.get(GUN_PARTICIPANTS_KEY);
-        // const result = gunParticipants.set({
-        //     name: newParticipant,
-        //     ready: false,
-        //     selectedScore: null,
-        // });
-
-        // result.once((_, key) => {
-        //     gunParty.put({ participantsCounter: party.participantsCounter + 1 });
-
-        //     joinAs(key);
-        // });
-
-        // newParticipant = '';
+        if(createdParticipant){
+            joinAs(createdParticipant.id);
+            newParticipant = '';
+        }
     }
 
     const joinAs = (participantId: string) => {
@@ -65,7 +55,7 @@
     <p class="text-center">These are the party players</p>
 
     <ul class="menu bg-base-100 text-secondary-content p-2">
-        {#each participants as participant (participant.id)}
+        {#each party.participants as participant (participant.id)}
             <li class="bg-primary">
                 <div class="flex justify-center">
                     {participant.id} - {participant.name}
