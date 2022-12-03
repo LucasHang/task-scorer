@@ -1,8 +1,8 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+
+	import { updateParticipant } from '$lib/api';
     import type Participant from "$lib/types/participant";
-    import { GUN_PARTIES_KEY, GUN_PARTICIPANTS_KEY } from '$lib/vars';
-    import gun from '$lib/client';
 
     export let partyId: string;
     export let participants: Array<Participant>;
@@ -10,25 +10,34 @@
     
     const fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
 
-    const updateParticipant = (value: Partial<Participant>) => {
-        gun.get(GUN_PARTIES_KEY).get(partyId).get(GUN_PARTICIPANTS_KEY).get(selectedParticipant.id).put({ ...value });
-    }
-
-    const handleSelectScore = (value: number) => {
+    /** @todo não precisaria dar update do score, somente quando desse ready */
+    const handleSelectScore = async (value: number) => {
         let newSelectedScore: number | null = value;
         if(value === selectedParticipant.selectedScore){
             newSelectedScore = null;
         }
 
-        updateParticipant({ selectedScore: newSelectedScore, ready: false });
+        await updateParticipant(
+            partyId, 
+            participants, 
+            { id: selectedParticipant.id, selectedScore: newSelectedScore, ready: false }
+        );
     }
 
-    const toggleReady = () => {
-        updateParticipant({ ready: !selectedParticipant.ready });
+    const toggleReady = async () => {
+        await updateParticipant(
+            partyId, 
+            participants, 
+            { id: selectedParticipant.id, ready: !selectedParticipant.ready }
+        );
     }
 
-    onMount(() => {
-        updateParticipant({ selectedScore: null, ready: false });
+    onMount(async () => {
+        await updateParticipant(
+            partyId, 
+            participants, 
+            { id: selectedParticipant.id, selectedScore: null, ready: false }
+        );
     });
 </script>
 

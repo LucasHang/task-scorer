@@ -1,9 +1,10 @@
-<!-- <script lang="ts">
+<script lang="ts">
     import { onDestroy, onMount } from 'svelte';
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
+	import type { Unsubscribe } from 'firebase/firestore';
     
-    import { getParty, watchParticipants, watchParty, type Listener } from '$lib/api';
+    import { getParty, watchParty } from '$lib/api';
 	import { currentParty } from '$lib/stores/currentParty';
     import type Participant from '$lib/types/participant';
 	import type Party from '$lib/types/party';
@@ -12,9 +13,7 @@
     import Loading from '$lib/loading/Loading.svelte';
 
     let partyStore: Party | null = null;
-    let participantsStore: Array<Participant> = [];
-    let partyListener: Listener | null = null;
-    let participantsListener: Listener | null = null;
+    let partyListener: Unsubscribe | null = null;
 
     const handlePartyNotFound = (partyId: string) => {
         console.log(`[Scoring]: Party "${partyId}" is over!`)
@@ -32,20 +31,14 @@
         });
     }
 
-    const startWatchingParticipants = (partyId: string) => {
-        participantsListener = watchParticipants(partyId, participantsStore, newParticipants => {
-            participantsStore = newParticipants;
-        });
-    }
-
-    const checkAllReady = (participants: Array<Participant>, counter: number) => {
-        if(counter === 0 || !participants.length){
+    const checkAllReady = (participants?: Array<Participant>) => {
+        if(!participants || !participants.length){
             return
         }
 
         const ready = participants.filter(p => p.ready && p.selectedScore);
 
-        if(ready.length === counter){
+        if(ready.length === participants.length){
             goto(`/parties/${$page.params.party}/result`);
         }
     }
@@ -55,23 +48,28 @@
 
         getParty(partyId)
             .then(data => {
+                if(!data){
+                    handlePartyNotFound(partyId);
+                    return;
+                }
+
                 partyStore = data;
 
                 // If the party could be found, we start watchin for furder changes
                 startWatchingParty(partyId);
-                startWatchingParticipants(partyId);
             })
             .catch(() => handlePartyNotFound(partyId));
 	});
     
     onDestroy(() => {
-        partyListener?.off();
-        participantsListener?.off();
-    });
+        if(partyListener){
+            partyListener();
+        }
+    })
 
-    $: selectedParticipant = participantsStore.find(p => p.id === $page.params.participant);
+    $: selectedParticipant = partyStore?.participants.find(p => p.id === $page.params.participant);
 
-    $: checkAllReady(participantsStore, partyStore?.participantsCounter || 0);
+    $: checkAllReady(partyStore?.participants);
 </script>
 
 <section>
@@ -112,8 +110,8 @@
             </a>
         </div>
 
-        <Scorer partyId={$page.params.party} participants={participantsStore} selectedParticipant={selectedParticipant} />
+        <Scorer partyId={$page.params.party} participants={partyStore.participants} selectedParticipant={selectedParticipant} />
     {:else}
         <Loading />
     {/if}
-</section> -->
+</section>

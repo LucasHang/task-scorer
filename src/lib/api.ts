@@ -91,3 +91,29 @@ export async function createParticipant(partyId: string, participantName: string
 		console.error('Error creating participant:', error);
 	}
 }
+
+type ParticipantToUpdate = Partial<Participant> & { id: string };
+
+export async function updateParticipant(
+	partyId: string,
+	currentParticipants: Array<Participant>,
+	newParticipant: ParticipantToUpdate
+) {
+	try {
+		const newParticipants = currentParticipants.map((participant) => {
+			if (participant.id !== newParticipant.id) {
+				return participant;
+			}
+
+			return { ...participant, ...newParticipant };
+		});
+
+		await updateDoc(collections.party(partyId), {
+			participants: newParticipants
+		});
+
+		console.info('Participant updated with success:', newParticipant);
+	} catch (error) {
+		console.error('Error updating participant:', error);
+	}
+}
