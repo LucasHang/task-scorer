@@ -1,12 +1,33 @@
-# Motivation
+# Presentation
+
+## Motivation
 
 Teams that work with Scrum methodology often go through the *scoring* process of their tasks to plan a sprint.
 Unfortunately, my team run out of free online options for *scoring*, so I made my own.
 
-# Tech Stack
+This is **Task Scorer**, application for *scoring* anything you want *in group* using *Fibonacci sequence*. 
 
-I was looking for something fast and new, specially avoiding the need of database and server.
-So for developing the frontend I choose SvelteKit (which I very much recommend) and for sharing + storing data I used a peer to peer library called [Gun.js](https://gun.eco).
+## Tech Stack
+
+I was looking for something:
+- Fast to develop
+- With realtime updates
+- Auto-managed database and server
+- Something new to learn about
+- FREE!
+
+So for developing the frontend I choose:
+- [SvelteKit](https://kit.svelte.dev) as framework (which I very much recommend)
+- [Tailwindcss](https://tailwindcss.com) with [daisyUI](https://daisyui.com/) for styles
+
+And as backend I choose:
+- [Firebase](https://firebase.google.com/docs) for saving and sharing data (mostly firestore)
+
+As hosting platform I'm using [Vercel](https://vercel.com), no stress.
+
+## Experience
+
+All the experience about task-scoring with the team I work with and the **Task Scorer** development will be shared at this Medium post: *...working on it...*
 
 # create-svelte
 
