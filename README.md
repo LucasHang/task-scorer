@@ -25,6 +25,8 @@ And as backend I choose:
 
 As hosting platform I'm using [Vercel](https://vercel.com), no stress.
 
+## Application Flow
+
 ![Application Flow](./task-scorer-sequence.svg)
 
 ## Experience
