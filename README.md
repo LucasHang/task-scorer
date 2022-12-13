@@ -25,6 +25,8 @@ And as backend I choose:
 
 As hosting platform I'm using [Vercel](https://vercel.com), no stress.
 
+![Application Flow](./task-scorer-sequence.svg)
+
 ## Experience
 
 All the experience about task-scoring with the team I work with and the **Task Scorer** development will be shared at this Medium post: *...working on it...*
