@@ -31,7 +31,7 @@ As hosting platform I'm using [Vercel](https://vercel.com), no stress.
 
 ## Experience
 
-All the experience about task-scoring with the team I work with and the **Task Scorer** development will be shared at this Medium post: *...working on it...*
+All the experience about task-scoring with the team I work with and the **Task Scorer** development will be shared at this Medium post: [A perspective about Story Points](https://medium.com/@_hanglucas/a-perspective-about-story-points-c8697beb8b54).
 
 # create-svelte
 
