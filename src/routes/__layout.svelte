@@ -7,6 +7,7 @@
     import { currentParty } from '$lib/stores/currentParty';
     import type CurrentParty from '$lib/types/currentParty';
     import Header from '$lib/header/Header.svelte';
+    import Footer from '$lib/footer/Footer.svelte';
     import '../app.css';
 
     const authGuard = (page: Page, party: CurrentParty | null) => {
@@ -49,6 +50,4 @@
 	<slot />
 </main>
 
-<footer class="footer footer-center p-4 bg-base-300 text-base-content">
-	<p>By <a href="https://github.com/LucasHang" target="_blank">Lucas Hang</a></p>
-</footer>
+<Footer />
