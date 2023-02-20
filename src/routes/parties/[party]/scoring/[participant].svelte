@@ -110,7 +110,12 @@
             </a>
         </div>
 
-        <Scorer partyId={$page.params.party} participants={partyStore.participants} selectedParticipant={selectedParticipant} />
+        <Scorer 
+            partyId={$page.params.party} 
+            scoreSystem={partyStore.scoreSystem} 
+            participants={partyStore.participants} 
+            selectedParticipant={selectedParticipant}
+        />
     {:else}
         <Loading />
     {/if}

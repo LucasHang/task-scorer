@@ -12,6 +12,7 @@ import {
 import { collections } from './client';
 import type Party from './types/party';
 import type Participant from './types/participant';
+import { DEFAULT_SCORE_SYSTEM } from './vars';
 
 export async function getParties() {
 	const querySnapshot = await getDocs(collections.parties);
@@ -23,6 +24,7 @@ export async function createParty(name: string) {
 		const newParty = {
 			id: uuidv4(),
 			name,
+			scoreSystem: DEFAULT_SCORE_SYSTEM,
 			participants: []
 		};
 
@@ -39,6 +41,32 @@ export async function createParty(name: string) {
 export async function getParty(id: string) {
 	const querySnapshot = await getDoc(collections.party(id));
 	return querySnapshot.data();
+}
+
+export async function updateParty(
+	partyId: string,
+	newParty: Partial<Party>,
+) {
+	if(!newParty.scoreSystem) {
+		throw new Error('Score System can not be empty');
+	}
+
+	newParty.scoreSystem.forEach((score) => {
+		if (Number.isNaN(score) || typeof score !== 'number' || score <= 0) {
+			throw new Error('Invalid Score System. It should be a list of positive numbers separated by commas');
+		}
+	});
+
+	try {
+		await updateDoc(collections.party(partyId), {
+			// As for now, we only allow to update the score system
+			scoreSystem: newParty.scoreSystem,
+		});
+
+		console.info('Party updated with success:', partyId);
+	} catch (error) {
+		console.error('Error updating party:', error);
+	}
 }
 
 export async function deleteParty(id: string) {

@@ -5,11 +5,10 @@
     import type Participant from "$lib/types/participant";
 
     export let partyId: string;
+    export let scoreSystem: Array<number>;
     export let participants: Array<Participant>;
     export let selectedParticipant: Participant;
     
-    const fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89];
-
     /** @todo não precisaria dar update do score, somente quando desse ready */
     const handleSelectScore = async (value: number) => {
         let newSelectedScore: number | null = value;
@@ -53,11 +52,11 @@
     </h1>
 
     <div class="grid grid-cols-5 md:grid-cols-10 gap-2">
-        {#each fibonacci as pointNumber}
+        {#each scoreSystem as scoreNumber}
             <button 
-                class={`btn bg-secondary text-secondary-content${pointNumber === selectedParticipant.selectedScore ? ' bg-success' : ''}`} 
-                on:click={() => handleSelectScore(pointNumber)}>
-                {pointNumber}
+                class={`btn bg-secondary text-secondary-content${scoreNumber === selectedParticipant.selectedScore ? ' bg-success' : ''}`} 
+                on:click={() => handleSelectScore(scoreNumber)}>
+                {scoreNumber}
             </button>
         {/each}
     </div>

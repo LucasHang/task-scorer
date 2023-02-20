@@ -1,4 +1,6 @@
 <script lang="ts">
+    import classNames from 'classnames';
+	import { updateParty } from "$lib/api";
     import type CurrentParty from "$lib/types/currentParty";
     import type Party from "$lib/types/party";
 
@@ -8,6 +10,8 @@
     export let onEnd: () => void;
 
     let tipMessage = 'Copy to clipboard';
+    let scoreSystemInput = party.scoreSystem.join(', ');
+    let scoreSystemError = '';
 
     function copyPartyKey() {
         navigator.clipboard.writeText(party.id);
@@ -17,9 +21,28 @@
     function resetTipMessage() {
         tipMessage = 'Copy to clipboard'
     }
+
+    async function updateScoreSystem() {
+        const newScoreSystem = scoreSystemInput.split(',').map(value => Number(value.trim()));
+
+        await updateParty(party.id, { scoreSystem: newScoreSystem })
+            .then(() => {
+                scoreSystemInput = newScoreSystem.join(', ');
+            })
+            .catch(error => {
+                scoreSystemError = error.message;
+            });
+    }
+
+    function resetScoreSystem() {
+        scoreSystemInput = party.scoreSystem.join(', ');
+        scoreSystemError = '';
+    }
+
+    $: scoreSystemInputChanged = scoreSystemInput !== party.scoreSystem.join(', ');
 </script>
 
-<div class="flex flex-col items-center mb-20 mt-4">
+<div class="flex flex-col items-center gap-1 mb-20 mt-4">
     <h1 class="text-2xl md:text-3xl font-bold text-center inline-flex items-center justify-center flex-wrap gap-2">
         OI, you are in "{party.name}" party
         <svg xmlns="http://www.w3.org/2000/svg" width="46px" height="46px" viewBox="0 0 72 72" id="emoji">
@@ -54,12 +77,47 @@
         <strong>
             Party Key:
             <div class="tooltip" data-tip={tipMessage}>
-                <button class="btn btn-sm btn-ghost gap-2" on:click={copyPartyKey} on:mouseenter={resetTipMessage}>
+                <button class="btn btn-sm btn-outline btn-accent gap-2 ml-1" on:click={copyPartyKey} on:mouseenter={resetTipMessage}>
                     {party.id}
                     <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"></path></svg>
                 </button>
             </div>
         </strong>
+
+        <div class="flex items-center gap-1">
+            <span class="whitespace-nowrap">Score System:</span>
+            <input 
+                type="text" 
+                placeholder="Score system" 
+                class="input input-bordered input-sm w-full max-w-md ml-1" 
+                bind:value={scoreSystemInput}
+            />
+
+            <button 
+                class="btn btn-xs btn-square btn-accent btn-success"
+                style={`transform:scale(${scoreSystemInputChanged ? 1 : 0})`}
+                on:click={updateScoreSystem}
+            >
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
+            </button>
+            <button 
+                class="btn btn-xs btn-square btn-accent btn-error" 
+                style={`transform:scale(${scoreSystemInputChanged ? 1 : 0})`}
+                on:click={resetScoreSystem}
+            >
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+            </button>
+        </div>
+
+        {#if scoreSystemInputChanged && scoreSystemError}
+            <div class="toast toast-end absolute bottom-8 right-8">
+                <div class="alert alert-error">
+                    <div>
+                        <span>{scoreSystemError}</span>
+                    </div>
+                </div>
+            </div>
+        {/if}
     {/if}
 
     {#if role === 'host'}
