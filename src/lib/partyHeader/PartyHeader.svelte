@@ -1,132 +1,116 @@
 <script lang="ts">
-    import classNames from 'classnames';
-	import { updateParty } from "$lib/api";
-    import type CurrentParty from "$lib/types/currentParty";
-    import type Party from "$lib/types/party";
+	import { updateParty } from '$lib/api';
+	import type CurrentParty from '$lib/types/currentParty';
+	import type Party from '$lib/types/party';
+	import CelebrationIcon from '$lib/icons/CelebrationIcon.svelte';
+	import CopyIcon from '$lib/icons/CopyIcon.svelte';
+	import CheckIcon from '$lib/icons/CheckIcon.svelte';
+	import TimesIcon from '$lib/icons/TimesIcon.svelte';
 
-    export let party: Party;
-    export let role: CurrentParty['role'];
-    export let onLeave: () => void;
-    export let onEnd: () => void;
+	export let party: Party;
+	export let role: CurrentParty['role'];
+	export let onLeave: () => void;
+	export let onEnd: () => void;
 
-    let tipMessage = 'Copy to clipboard';
-    let scoreSystemInput = party.scoreSystem.join(', ');
-    let scoreSystemError = '';
+	let tipMessage = 'Copy to clipboard';
+	let scoreSystemInput = party.scoreSystem.join(', ');
+	let scoreSystemError = '';
 
-    function copyPartyKey() {
-        navigator.clipboard.writeText(party.id);
-        tipMessage = 'Copied!';
-    }
+	function copyPartyKey() {
+		navigator.clipboard.writeText(party.id);
+		tipMessage = 'Copied!';
+	}
 
-    function resetTipMessage() {
-        tipMessage = 'Copy to clipboard'
-    }
+	function resetTipMessage() {
+		tipMessage = 'Copy to clipboard';
+	}
 
-    async function updateScoreSystem() {
-        const newScoreSystem = scoreSystemInput.split(',').map(value => Number(value.trim()));
+	async function updateScoreSystem() {
+		const newScoreSystem = scoreSystemInput.split(',').map((value) => Number(value.trim()));
 
-        await updateParty(party.id, { scoreSystem: newScoreSystem })
-            .then(() => {
-                scoreSystemInput = newScoreSystem.join(', ');
-            })
-            .catch(error => {
-                scoreSystemError = error.message;
-            });
-    }
+		await updateParty(party.id, { scoreSystem: newScoreSystem })
+			.then(() => {
+				scoreSystemInput = newScoreSystem.join(', ');
+			})
+			.catch((error) => {
+				scoreSystemError = error.message;
+			});
+	}
 
-    function resetScoreSystem() {
-        scoreSystemInput = party.scoreSystem.join(', ');
-        scoreSystemError = '';
-    }
+	function resetScoreSystem() {
+		scoreSystemInput = party.scoreSystem.join(', ');
+		scoreSystemError = '';
+	}
 
-    $: scoreSystemInputChanged = scoreSystemInput !== party.scoreSystem.join(', ');
+	$: scoreSystemInputChanged = scoreSystemInput !== party.scoreSystem.join(', ');
 </script>
 
 <div class="flex flex-col items-center gap-1 mb-20 mt-4">
-    <h1 class="text-2xl md:text-3xl font-bold text-center inline-flex items-center justify-center flex-wrap gap-2">
-        OI, you are in "{party.name}" party
-        <svg xmlns="http://www.w3.org/2000/svg" width="46px" height="46px" viewBox="0 0 72 72" id="emoji">
-            <g id="color">
-            <polygon fill="#F1B31C" stroke="none" points="26.1808,20.1808 38.75,32.75 51.3192,45.3192 29.7894,54.2798 8.2597,63.2403 17.2202,41.7106"/>
-            <polygon fill="#FCEA2B" stroke="none" points="40,35 25.6924,20.6692 16.3914,42.5394 7.0905,64.4095"/>
-            <polygon fill="#EA5A47" stroke="none" points="15.2238,45.2849 26.2858,56.3469 20.7548,58.5984 12.9576,50.8012"/>
-            <polygon fill="#D22F27" stroke="none" points="17.3429,55.2475 20.7548,58.5984 26.2858,56.3469 21.4849,51.546"/>
-            <polygon fill="#EA5A47" stroke="none" points="20.8045,32.1625 27.5011,38.8591 39.2002,50.5583 32.9273,53.4217 24.7555,45.2498 18.1504,38.6447"/>
-            <polygon fill="#D22F27" stroke="none" points="26.5369,47.0312 32.9273,53.4216 39.2003,50.5582 31.3616,42.7197"/>
-            <ellipse cx="30.2951" cy="14.4579" rx="2" ry="1.9708" fill="#8967aa" stroke="none"/>
-            <path fill="#ea5a47" stroke="none" d="M23,37"/>
-            <ellipse cx="60.2951" cy="18.4579" rx="2" ry="1.9708" fill="#f1b31c" stroke="none"/>
-            <ellipse cx="57.2951" cy="39.4579" rx="2" ry="1.9708" fill="#d22f27" stroke="none"/>
-            </g>
-            <g id="hair"/>
-            <g id="skin"/>
-            <g id="skin-shadow"/>
-            <g id="line">
-            <polyline fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" points="50.6626,45.6395 50.8308,45.8076 28.9606,55.1086 7.0904,64.4096 16.3914,42.5394 25.6923,20.6692"/>
-            <polyline fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" points="25.801,20.7779 38.2616,33.2384 50.6626,45.6395"/>
-            <line x1="25.6923" x2="25.801" y1="20.6692" y2="20.7779" fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
-            <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" d="M46.4905,7.3671c0.2347,0.4487,0.4027,0.943,0.4897,1.473c0.451,2.7473-1.447,5.4141-4.2392,5.9565"/>
-            <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" d="M42.9327,14.7763c-0.5049,0.0384-1.0133,0.1573-1.509,0.364c-2.5697,1.0713-3.828,4.093-2.8105,6.7492"/>
-            <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" d="M61.7928,26.7168c-0.0987,0.4967-0.2778,0.987-0.5425,1.4544c-1.372,2.4225-4.5229,3.309-7.0378,1.98"/>
-            <path fill="none" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" d="M54.3745,30.2558c-0.4173-0.2868-0.8878-0.513-1.4036-0.663c-2.6733-0.7775-5.5486,0.7867-6.4223,3.4936"/>
-            </g>
-        </svg>
-    </h1>
+	<h1
+		class="text-2xl md:text-3xl font-bold text-center inline-flex items-center justify-center flex-wrap gap-2"
+	>
+		OI, you are in "{party.name}" party
+		<CelebrationIcon />
+	</h1>
 
-    {#if role === 'host'}
-        <strong>
-            Party Key:
-            <div class="tooltip" data-tip={tipMessage}>
-                <button class="btn btn-sm btn-outline btn-accent gap-2 ml-1" on:click={copyPartyKey} on:mouseenter={resetTipMessage}>
-                    {party.id}
-                    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"></path></svg>
-                </button>
-            </div>
-        </strong>
+	{#if role === 'host'}
+		<strong>
+			Party Key:
+			<div class="tooltip" data-tip={tipMessage}>
+				<button
+					class="btn btn-sm btn-outline btn-accent gap-2 ml-1"
+					on:click={copyPartyKey}
+					on:mouseenter={resetTipMessage}
+				>
+					{party.id}
+					<CopyIcon />
+				</button>
+			</div>
+		</strong>
 
-        <div class="flex items-center gap-1">
-            <span class="whitespace-nowrap">Score System:</span>
-            <input 
-                type="text" 
-                placeholder="Score system" 
-                class="input input-bordered input-sm w-full max-w-md ml-1" 
-                bind:value={scoreSystemInput}
-            />
+		<div class="flex items-center gap-1">
+			<span class="whitespace-nowrap">Score System:</span>
+			<input
+				type="text"
+				placeholder="Score system"
+				class="input input-bordered input-sm w-full max-w-md ml-1"
+				bind:value={scoreSystemInput}
+			/>
 
-            <button 
-                class="btn btn-xs btn-square btn-accent btn-success"
-                style={`transform:scale(${scoreSystemInputChanged ? 1 : 0})`}
-                on:click={updateScoreSystem}
-            >
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
-            </button>
-            <button 
-                class="btn btn-xs btn-square btn-accent btn-error" 
-                style={`transform:scale(${scoreSystemInputChanged ? 1 : 0})`}
-                on:click={resetScoreSystem}
-            >
-                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h24v24H0z"></path><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
-            </button>
-        </div>
+			<button
+				class="btn btn-xs btn-square btn-accent btn-success"
+				style={`transform:scale(${scoreSystemInputChanged ? 1 : 0})`}
+				on:click={updateScoreSystem}
+			>
+				<CheckIcon />
+			</button>
+			<button
+				class="btn btn-xs btn-square btn-accent btn-error"
+				style={`transform:scale(${scoreSystemInputChanged ? 1 : 0})`}
+				on:click={resetScoreSystem}
+			>
+				<TimesIcon />
+			</button>
+		</div>
 
-        {#if scoreSystemInputChanged && scoreSystemError}
-            <div class="toast toast-end absolute bottom-8 right-8">
-                <div class="alert alert-error">
-                    <div>
-                        <span>{scoreSystemError}</span>
-                    </div>
-                </div>
-            </div>
-        {/if}
-    {/if}
+		{#if scoreSystemInputChanged && scoreSystemError}
+			<div class="toast toast-end absolute bottom-8 right-8">
+				<div class="alert alert-error">
+					<div>
+						<span>{scoreSystemError}</span>
+					</div>
+				</div>
+			</div>
+		{/if}
+	{/if}
 
-    {#if role === 'host'}
-        <button class="btn btn-outline btn-error btn-xs mt-2" type="button" on:click={onEnd}>
-            END the party
-        </button>
-    {:else}
-        <button class="btn btn-outline btn-error btn-xs mt-2" type="button" on:click={onLeave}>
-            LEAVE the party
-        </button>
-    {/if}
+	{#if role === 'host'}
+		<button class="btn btn-outline btn-error btn-xs mt-2" type="button" on:click={onEnd}>
+			END the party
+		</button>
+	{:else}
+		<button class="btn btn-outline btn-error btn-xs mt-2" type="button" on:click={onLeave}>
+			LEAVE the party
+		</button>
+	{/if}
 </div>
