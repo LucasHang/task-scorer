@@ -14,6 +14,8 @@ import type Party from './types/party';
 import type Participant from './types/participant';
 import { DEFAULT_SCORE_SYSTEM } from './vars';
 
+/** @todo Padronizar tratativa dos erros e feedback pro usuário */
+
 export async function getParties() {
 	const querySnapshot = await getDocs(collections.parties);
 	return querySnapshot.docs.map((doc) => doc.data());
