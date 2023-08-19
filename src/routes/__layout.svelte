@@ -41,6 +41,12 @@
 
 <svelte:head>
 	<title>Task Scorer</title>
+	{#if $page.routeId?.includes('scoring')}
+		<script
+			async
+			src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6396960254487226"
+			crossorigin="anonymous"></script>
+	{/if}
 </svelte:head>
 
 <Header />
