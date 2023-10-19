@@ -45,24 +45,23 @@ export async function getParty(id: string) {
 	return querySnapshot.data();
 }
 
-export async function updateParty(
-	partyId: string,
-	newParty: Partial<Party>,
-) {
-	if(!newParty.scoreSystem) {
+export async function updateParty(partyId: string, newParty: Partial<Party>) {
+	if (!newParty.scoreSystem) {
 		throw new Error('Score System can not be empty');
 	}
 
 	newParty.scoreSystem.forEach((score) => {
-		if (Number.isNaN(score) || typeof score !== 'number' || score <= 0) {
-			throw new Error('Invalid Score System. It should be a list of positive numbers separated by commas');
+		if (!score || typeof score !== 'string') {
+			throw new Error(
+				'Invalid Score System. It should be a list of notes (positive numbers, letters, etc...) separated by comma'
+			);
 		}
 	});
 
 	try {
 		await updateDoc(collections.party(partyId), {
 			// As for now, we only allow to update the score system
-			scoreSystem: newParty.scoreSystem,
+			scoreSystem: newParty.scoreSystem
 		});
 
 		console.info('Party updated with success:', partyId);

@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { browser } from '$app/env';
+import { browser } from '$app/environment';
 import { LOCAL_STORAGE_PARTY_KEY } from '$lib/vars';
 import type CurrentParty from '$lib/types/currentParty';
 

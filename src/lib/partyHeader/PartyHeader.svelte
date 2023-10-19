@@ -26,7 +26,7 @@
 	}
 
 	async function updateScoreSystem() {
-		const newScoreSystem = scoreSystemInput.split(',').map((value) => Number(value.trim()));
+		const newScoreSystem = scoreSystemInput.split(',').map((value) => value.trim());
 
 		await updateParty(party.id, { scoreSystem: newScoreSystem })
 			.then(() => {

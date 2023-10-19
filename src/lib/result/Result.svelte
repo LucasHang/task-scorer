@@ -5,9 +5,8 @@
 	import type CurrentParty from '$lib/types/currentParty';
 
 	import { updateParticipants } from '$lib/api';
-	import TrendDownIcon from '$lib/icons/TrendDownIcon.svelte';
-	import GlowIcon from '$lib/icons/GlowIcon.svelte';
-	import TrendUpIcon from '$lib/icons/TrendUpIcon.svelte';
+	import StatsForQuantitativeScores from './StatsForQuantitativeScores.svelte';
+	import StatsForQualitativeScores from './StatsForQualitativeScores.svelte';
 
 	export let partyId: string;
 	export let participants: Array<Participant>;
@@ -24,40 +23,26 @@
 		goto(goBackUrl);
 	};
 
-	const smallest = Math.min(...participants.map((p) => p.selectedScore || 0));
+	const allScores = participants.map((p) => p.selectedScore || '0');
 
-	const scoreTotal = participants.reduce((accumulator, participant) => {
-		return accumulator + (participant.selectedScore || 0);
-	}, 0);
+	const anyQualitativeScore = allScores.some((scoreNote) => Number.isNaN(Number(scoreNote)));
+	console.log('🚀 ~ file: Result.svelte:29 ~ anyQualitativeScore:', anyQualitativeScore);
 
-	const highest = Math.max(...participants.map((p) => p.selectedScore || 0));
+	let allQuantitativeScores: Array<number> = [];
+
+	if (!anyQualitativeScore) {
+		allQuantitativeScores = allScores.map((scoreNote) => Number(scoreNote));
+	}
 </script>
 
-<div class="stats stats-vertical lg:stats-horizontal shadow">
-	<div class="stat place-items-center">
-		<div class="stat-title">The smallest score</div>
-		<div class="stat-value">
-			{smallest}
-			<TrendDownIcon />
-		</div>
-	</div>
-
-	<div class="stat place-items-center">
-		<div class="stat-title">The final score mean</div>
-		<div class="stat-value text-secondary">
-			{Math.round(scoreTotal / participants.length)}
-			<GlowIcon />
-		</div>
-	</div>
-
-	<div class="stat place-items-center">
-		<div class="stat-title">The highest score</div>
-		<div class="stat-value">
-			{highest}
-			<TrendUpIcon />
-		</div>
-	</div>
-</div>
+{#if !!anyQualitativeScore}
+	<StatsForQualitativeScores quantityOfParticipants={participants.length} scores={allScores} />
+{:else}
+	<StatsForQuantitativeScores
+		quantityOfParticipants={participants.length}
+		scores={allQuantitativeScores}
+	/>
+{/if}
 
 <ul class="menu p-2 m-4">
 	{#each participants as participant (participant.id)}

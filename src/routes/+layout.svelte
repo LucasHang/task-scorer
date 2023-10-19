@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { browser } from '$app/env';
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import type { Page } from '@sveltejs/kit';
@@ -8,6 +8,7 @@
 	import type CurrentParty from '$lib/types/currentParty';
 	import Header from '$lib/header/Header.svelte';
 	import Footer from '$lib/footer/Footer.svelte';
+
 	import '../app.css';
 
 	const authGuard = (page: Page, party: CurrentParty | null) => {
@@ -15,7 +16,7 @@
 			return;
 		}
 
-		if (page.routeId === '') {
+		if (page.route.id === '' || page.route.id === '/') {
 			if (!party?.partyId) {
 				return;
 			}
@@ -29,7 +30,7 @@
 			return goto('/');
 		}
 
-		if (page.routeId?.includes('scoring')) {
+		if (page.route.id?.includes('scoring')) {
 			if (!party?.participantId) {
 				return goto(`/parties/${party.partyId}`);
 			}
@@ -43,10 +44,12 @@
 	<title>Task Scorer</title>
 </svelte:head>
 
-<Header />
+<div class="h-full flex flex-col">
+	<Header />
 
-<main class="flex-1 flex center">
-	<slot />
-</main>
+	<main class="flex-1 flex center">
+		<slot />
+	</main>
 
-<Footer />
+	<Footer />
+</div>

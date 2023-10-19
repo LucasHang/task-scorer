@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
-		<link rel="canonical" href="https://taskscorer.com.br/" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
 		<meta name="color-scheme" content="dark" />
 		<meta name="author" content="Lucas Hang" />
 		<meta
@@ -27,7 +27,7 @@
 
 		%sveltekit.head%
 	</head>
-	<body class="h-screen">
-		<div class="h-full flex flex-col">%sveltekit.body%</div>
+	<body data-sveltekit-preload-data="hover" class="h-screen">
+		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

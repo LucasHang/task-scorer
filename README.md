@@ -2,14 +2,15 @@
 
 ## Motivation
 
-Teams that work with Scrum methodology often go through the *scoring* process of their tasks to plan a sprint.
-Unfortunately, my team run out of free online options for *scoring*, so I made my own.
+Teams that work with Scrum methodology often go through the _scoring_ process of their tasks to plan a sprint.
+Unfortunately, my team run out of free online options for _scoring_, so I made my own.
 
-This is **Task Scorer**, application for *scoring* anything you want *in group* using *Fibonacci sequence*. 
+This is **Task Scorer**, application for _scoring_ anything you want _in group_ using _Fibonacci sequence_.
 
 ## Tech Stack
 
 I was looking for something:
+
 - Fast to develop
 - With realtime updates
 - Auto-managed database and server
@@ -17,10 +18,12 @@ I was looking for something:
 - FREE!
 
 So for developing the frontend I choose:
+
 - [SvelteKit](https://kit.svelte.dev) as framework (which I very much recommend)
 - [Tailwindcss](https://tailwindcss.com) with [daisyUI](https://daisyui.com/) for styles
 
 And as backend I choose:
+
 - [Firebase](https://firebase.google.com/docs) for saving and sharing data (mostly firestore)
 
 As hosting platform I'm using [Vercel](https://vercel.com), no stress.
@@ -43,10 +46,10 @@ If you're seeing this, you've probably already done this step. Congrats!
 
 ```bash
 # create a new project in the current directory
-npm init svelte
+npm create svelte@latest
 
 # create a new project in my-app
-npm init svelte my-app
+npm create svelte@latest my-app
 ```
 
 ## Developing
